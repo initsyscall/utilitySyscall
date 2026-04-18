@@ -1,0 +1,8 @@
+[
+  {
+    "heading": "renderMarkdown",
+    "description": "Convert markdown content to rendered PDF with syntax highlighting and katex",
+    "filePath": "src/utils/renderMarkdown/index.html",
+    "tags": ["markdown", "html", "render", "syntax", "highlight"]
+  }
+]

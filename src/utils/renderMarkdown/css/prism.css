@@ -1,0 +1,108 @@
+/* prism-syscall.css - Custom Prism theme using themeInit.json colors */
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: var(--textPrimary);
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.6;
+  tab-size: 2;
+  hyphens: none;
+}
+
+pre[class*="language-"] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+/* Tokens - using themeInit colors */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--textMuted);
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: var(--textSecondary);
+}
+
+.token.namespace {
+  opacity: 0.8;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: var(--num);
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: var(--str);
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: var(--opr);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: var(--kwd);
+}
+
+.token.function,
+.token.class-name {
+  color: var(--fnc);
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: var(--num);
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+/* Line numbers (optional) */
+.line-numbers .line-numbers-rows {
+  border-right: 1px solid var(--border);
+}
+
+.line-numbers-rows > span::before {
+  color: var(--textMuted);
+}

@@ -1,0 +1,38 @@
+/* theme.css - CSS Variables from themeInit.json */
+:root {
+  /* nightSyscall (default dark) */
+  --bg: #161423;
+  --surface: #201D33;
+  --border: #322D4A;
+  --textPrimary: #E0DEF4;
+  --textSecondary: #908CAA;
+  --textMuted: #6E6A86;
+  --kwd: #A277FF;
+  --fnc: #FF3366;
+  --typ: #CBA6F7;
+  --str: #F087BD;
+  --num: #F6C177;
+  --opr: #80FFEA;
+  --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root[data-theme="daySyscall"] {
+  --bg: #FCF6F5;
+  --surface: #F2EAE9;
+  --border: #E0D1CF;
+  --textPrimary: #45383C;
+  --textSecondary: #827075;
+  --textMuted: #A8959A;
+  --kwd: #752D7A;
+  --fnc: #D62846;
+  --typ: #9E4081;
+  --str: #D96677;
+  --num: #B06A3B;
+  --opr: #0F828A;
+}
+
+/* Typography */
+body {
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
