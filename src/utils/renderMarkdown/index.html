@@ -502,14 +502,28 @@
       }
 
       function exportAsPdf() {
-        const dayColors = theme.themeData.daySyscall.colors;
-        
         // Trigger Prism highlighting first
         if (window.Prism) {
           Prism.highlightAllUnder(document.getElementById('previewOutput'));
         }
         
         const preview = document.getElementById('previewOutput').cloneNode(true);
+        
+        // White background, dark text for print
+        const printColors = {
+          bg: '#ffffff',
+          surface: '#f5f5f5',
+          border: '#dddddd',
+          textPrimary: '#1a1a1a',
+          textSecondary: '#555555',
+          textMuted: '#888888',
+          kwd: '#752D7A',
+          fnc: '#D62846',
+          typ: '#9E4081',
+          str: '#D96677',
+          num: '#B06A3B',
+          opr: '#0F828A'
+        };
         
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
@@ -521,10 +535,13 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
             <style>
               * { box-sizing: border-box; margin: 0; padding: 0; }
+              @media print {
+                body { padding: 0 !important; }
+              }
               body { 
                 font-family: 'Segoe UI', system-ui, sans-serif; 
-                background: ${dayColors.bg}; 
-                color: ${dayColors.textPrimary}; 
+                background: ${printColors.bg}; 
+                color: ${printColors.textPrimary}; 
                 padding: 15mm; 
                 max-width: 100%; 
                 margin: 0 auto; 
@@ -533,31 +550,31 @@
               }
               h1 { 
                 font-size: 1.8em; 
-                border-bottom: 2px solid ${dayColors.kwd}; 
+                border-bottom: 2px solid ${printColors.kwd}; 
                 padding-bottom: 0.3em; 
-                color: ${dayColors.textPrimary}; 
+                color: ${printColors.textPrimary}; 
                 margin: 0 0 0.5em 0;
               }
               h2 { 
                 font-size: 1.4em; 
-                border-left: 4px solid ${dayColors.typ}; 
+                border-left: 4px solid ${printColors.typ}; 
                 padding-left: 12px; 
-                color: ${dayColors.textPrimary}; 
+                color: ${printColors.textPrimary}; 
                 margin: 1.5em 0 0.5em 0;
               }
-              h3 { font-size: 1.2em; color: ${dayColors.fnc}; }
-              h4 { color: ${dayColors.str}; }
+              h3 { font-size: 1.2em; color: ${printColors.fnc}; }
+              h4 { color: ${printColors.str}; }
               p { margin: 0.8em 0; }
               code { 
-                background: ${dayColors.surface}; 
-                color: ${dayColors.fnc}; 
+                background: ${printColors.surface}; 
+                color: ${printColors.fnc}; 
                 padding: 2px 6px; 
                 border-radius: 4px; 
                 font-family: monospace;
                 font-size: 0.9em;
               }
               pre { 
-                background: ${dayColors.surface}; 
+                background: ${printColors.surface}; 
                 padding: 12px; 
                 border-radius: 8px; 
                 overflow-x: auto;
@@ -566,75 +583,75 @@
               pre code { 
                 background: none; 
                 padding: 0; 
-                color: ${dayColors.textPrimary}; 
+                color: ${printColors.textPrimary}; 
                 font-size: 0.85em;
                 line-height: 1.5;
               }
               blockquote { 
-                border-left: 4px solid ${dayColors.kwd}; 
-                background: ${dayColors.surface}; 
+                border-left: 4px solid ${printColors.kwd}; 
+                background: ${printColors.surface}; 
                 padding: 10px 16px; 
-                color: ${dayColors.textSecondary}; 
+                color: ${printColors.textSecondary}; 
                 border-radius: 0 8px 8px 0; 
                 margin: 0.8em 0;
               }
               ul, ol { padding-left: 20px; margin: 0.8em 0; }
               li { margin: 0.3em 0; }
-              a { color: ${dayColors.kwd}; }
+              a { color: ${printColors.kwd}; }
               table { 
                 width: auto; 
                 max-width: 100%;
                 min-width: 50%;
                 border-collapse: collapse; 
                 margin: 0.8em 0; 
-                border: 1px solid ${dayColors.border};
+                border: 1px solid ${printColors.border};
                 font-size: 0.85em;
                 break-inside: avoid;
                 page-break-inside: avoid;
                 -webkit-region-break: avoid;
               }
               th, td { 
-                border: 1px solid ${dayColors.border}; 
+                border: 1px solid ${printColors.border}; 
                 padding: 6px 12px;
                 text-align: left;
                 min-width: 80px;
               }
               th { 
-                background: ${dayColors.surface}; 
-                color: ${dayColors.kwd}; 
+                background: ${printColors.surface}; 
+                color: ${printColors.kwd}; 
                 font-weight: 600;
               }
-              tr:nth-child(even) { background: ${dayColors.surface}; }
+              tr:nth-child(even) { background: ${printColors.surface}; }
               hr { 
                 border: none; 
-                border-top: 2px dashed ${dayColors.border}; 
+                border-top: 2px dashed ${printColors.border}; 
                 margin: 1.5em 0; 
               }
               img { max-width: 100%; height: auto; }
               .katex-display { 
-                background: ${dayColors.surface}; 
+                background: ${printColors.surface}; 
                 padding: 12px; 
                 border-radius: 8px; 
                 margin: 0.8em 0; 
                 overflow-x: auto;
               }
-              /* Syntax highlighting with theme colors */
-              .token.comment { color: ${dayColors.textMuted}; font-style: italic; }
-              .token.keyword { color: ${dayColors.kwd}; }
-              .token.string { color: ${dayColors.str}; }
-              .token.number { color: ${dayColors.num}; }
-              .token.function { color: ${dayColors.fnc}; }
-              .token.operator { color: ${dayColors.opr}; }
-              .token.class-name { color: ${dayColors.typ}; }
-              .token.punctuation { color: ${dayColors.textSecondary}; }
-              .token.property { color: ${dayColors.num}; }
-              .token.boolean { color: ${dayColors.num}; }
-              .token.attr-name { color: ${dayColors.kwd}; }
-              .token.attr-value { color: ${dayColors.str}; }
-              .token.selector { color: ${dayColors.kwd}; }
-              .token.tag { color: ${dayColors.fnc}; }
-              .token.atrule { color: ${dayColors.kwd}; }
-              .tokenbuiltin { color: ${dayColors.fnc}; }
+              /* Syntax highlighting */
+              .token.comment { color: ${printColors.textMuted}; font-style: italic; }
+              .token.keyword { color: ${printColors.kwd}; }
+              .token.string { color: ${printColors.str}; }
+              .token.number { color: ${printColors.num}; }
+              .token.function { color: ${printColors.fnc}; }
+              .token.operator { color: ${printColors.opr}; }
+              .token.class-name { color: ${printColors.typ}; }
+              .token.punctuation { color: ${printColors.textSecondary}; }
+              .token.property { color: ${printColors.num}; }
+              .token.boolean { color: ${printColors.num}; }
+              .token.attr-name { color: ${printColors.kwd}; }
+              .token.attr-value { color: ${printColors.str}; }
+              .token.selector { color: ${printColors.kwd}; }
+              .token.tag { color: ${printColors.fnc}; }
+              .token.atrule { color: ${printColors.kwd}; }
+              .tokenbuiltin { color: ${printColors.fnc}; }
             </style>
           </head>
           <body>${preview.innerHTML}</body>
