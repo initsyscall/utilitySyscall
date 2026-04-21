@@ -28,7 +28,7 @@ utilitySyscall is a collection of self-contained, modular web utilities designed
 
 ### Website
 
-This repository is live at [utilitySyscall](https://initsyscall.codeberg.org/utilitySyscall
+This repository is live at [utilitySyscall](https://initsyscall.codeberg.org/utilitySyscall)
 
 ### For Local usage
 

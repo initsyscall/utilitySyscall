@@ -1,0 +1,20 @@
+{
+  "name": "utilitySyscall",
+  "short_name": "utils.Syscall",
+  "description": "Suckless Web Utils — lightweight developer toolkit running entirely in the browser",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#161423",
+  "theme_color": "#A277FF",
+  "orientation": "any",
+  "categories": ["developer-tools", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

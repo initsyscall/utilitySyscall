@@ -2,12 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#161423">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>renderMarkdown | utils.Syscall</title>
+  <link rel="manifest" href="../../../manifest.json">
+  <link rel="icon" href="../../../icons/icon.svg" type="image/svg+xml">
   
   <!-- Modular CSS -->
   <link rel="stylesheet" href="css/theme.css">
   <link rel="stylesheet" href="css/markdown.css">
+  <link rel="stylesheet" href="css/editor.css">
   <link rel="stylesheet" href="css/prism.css">
   
   <!-- Prism.js bundled for syntax highlighting -->
@@ -223,7 +229,14 @@
       padding: 0 4px;
     }
 
-    .editor-pane textarea,
+    .editor-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
     .preview-pane .preview-content {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -239,7 +252,7 @@
       transition: border-color var(--transition);
     }
 
-    .editor-pane textarea:focus { outline: none; border-color: var(--kwd); }
+    .editor:focus { outline: none; border-color: var(--kwd); }
 
     .preview-pane .preview-content {
       overflow-y: auto;
@@ -370,7 +383,10 @@
     <div class="editor-container">
       <div class="pane editor-pane">
         <div class="pane-header">Markdown</div>
-        <textarea id="markdownInput" placeholder="# Hello World&#10;&#10;Write your markdown here..."></textarea>
+        <div class="editor-wrapper">
+          <textarea id="markdownInput" class="editor-textarea" placeholder="# Hello World&#10;&#10;Write your markdown here..."></textarea>
+          <div id="editorHighlight" class="editor-highlight"></div>
+        </div>
       </div>
       <div class="pane preview-pane">
         <div class="pane-header">Preview</div>
@@ -383,416 +399,12 @@
   <script src="js/theme.js"></script>
   <script src="js/parser.js"></script>
   <script src="js/math.js"></script>
-
+  <script src="js/editor.js"></script>
+  <script src="js/app.js"></script>
   <script>
-    // App module - orchestrates all modules
-    const App = (function() {
-      let currentTheme = 'nightSyscall';
-      let mobileView = 'preview'; // 'preview' or 'editor' on mobile
-
-      async function init() {
-        // Initialize theme
-        currentTheme = theme.initTheme();
-        updateThemeIcon();
-        
-        // Initialize parser (loads marked.js)
-        await parser.initParser();
-        
-        // Load default markdown
-        loadDefaultMarkdown();
-        
-        // Setup event listeners
-        setupEventListeners();
-        
-        // Initialize mobile view
-        initMobileView();
-        
-        // Initialize KaTeX
-        math.initKatex().then(() => {
-          console.log('Math support ready');
-          renderAll();
-        });
-        
-        // Initial render
-        renderAll();
-      }
-
-      function updateThemeIcon() {
-        const icon = theme.getThemeIcon(currentTheme);
-        document.querySelector('.theme-icon').innerHTML = icon;
-        document.querySelector('.theme-icon').className = 
-          'theme-icon ' + (currentTheme === 'nightSyscall' ? 'night' : 'day');
-      }
-
-      function toggleTheme() {
-        currentTheme = currentTheme === 'nightSyscall' ? 'daySyscall' : 'nightSyscall';
-        theme.setTheme(currentTheme);
-        updateThemeIcon();
-      }
-
-      function toggleMobileView() {
-        mobileView = mobileView === 'preview' ? 'editor' : 'preview';
-        updateMobileView();
-      }
-
-      function updateMobileView() {
-        const editorPane = document.querySelector('.editor-pane');
-        const previewPane = document.querySelector('.preview-pane');
-        const iconPreview = document.querySelector('.icon-preview');
-        const iconEditor = document.querySelector('.icon-editor');
-        
-        if (mobileView === 'preview') {
-          editorPane.classList.remove('active');
-          previewPane.classList.add('active');
-          iconPreview.style.display = 'none';
-          iconEditor.style.display = 'block';
-        } else {
-          previewPane.classList.remove('active');
-          editorPane.classList.add('active');
-          iconPreview.style.display = 'block';
-          iconEditor.style.display = 'none';
-        }
-      }
-
-      function initMobileView() {
-        // On mobile, default to preview
-        if (window.innerWidth < 768) {
-          mobileView = 'preview';
-          updateMobileView();
-        }
-      }
-
-      function renderAll() {
-        parser.renderPreview('markdownInput', 'previewOutput');
-        
-        // Apply Prism highlighting
-        setTimeout(() => {
-          if (window.Prism) {
-            Prism.highlightAllUnder(document.getElementById('previewOutput'));
-          }
-          // Render math
-          math.processMathInElement('previewOutput');
-        }, 50);
-      }
-
-      function loadDefaultMarkdown() {
-        fetch('default.md')
-          .then(res => res.text())
-          .then(text => {
-            document.getElementById('markdownInput').value = text;
-            renderAll();
-          })
-          .catch(() => {
-            // No default, use placeholder
-          });
-      }
-
-      function importFile() {
-        document.getElementById('fileInput').click();
-      }
-
-      function handleFileImport(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          document.getElementById('markdownInput').value = e.target.result;
-          renderAll();
-          closeMenu();
-        };
-        reader.readAsText(file);
-      }
-
-      function exportAsPdf() {
-        // Trigger Prism highlighting first
-        if (window.Prism) {
-          Prism.highlightAllUnder(document.getElementById('previewOutput'));
-        }
-        
-        const preview = document.getElementById('previewOutput').cloneNode(true);
-        
-        // White background, dark text for print
-        const printColors = {
-          bg: '#ffffff',
-          surface: '#f5f5f5',
-          border: '#dddddd',
-          textPrimary: '#1a1a1a',
-          textSecondary: '#555555',
-          textMuted: '#888888',
-          kwd: '#752D7A',
-          fnc: '#D62846',
-          typ: '#9E4081',
-          str: '#D96677',
-          num: '#B06A3B',
-          opr: '#0F828A'
-        };
-        
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <title>Markdown Export</title>
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-            <style>
-              * { box-sizing: border-box; margin: 0; padding: 0; }
-              @media print {
-                body { padding: 0 !important; }
-              }
-              body { 
-                font-family: 'Segoe UI', system-ui, sans-serif; 
-                background: ${printColors.bg}; 
-                color: ${printColors.textPrimary}; 
-                padding: 15mm; 
-                max-width: 100%; 
-                margin: 0 auto; 
-                line-height: 1.5; 
-                overflow-x: hidden;
-              }
-              h1 { 
-                font-size: 1.8em; 
-                border-bottom: 2px solid ${printColors.kwd}; 
-                padding-bottom: 0.3em; 
-                color: ${printColors.textPrimary}; 
-                margin: 0 0 0.5em 0;
-              }
-              h2 { 
-                font-size: 1.4em; 
-                border-left: 4px solid ${printColors.typ}; 
-                padding-left: 12px; 
-                color: ${printColors.textPrimary}; 
-                margin: 1.5em 0 0.5em 0;
-              }
-              h3 { font-size: 1.2em; color: ${printColors.fnc}; }
-              h4 { color: ${printColors.str}; }
-              p { margin: 0.8em 0; }
-              code { 
-                background: ${printColors.surface}; 
-                color: ${printColors.fnc}; 
-                padding: 2px 6px; 
-                border-radius: 4px; 
-                font-family: monospace;
-                font-size: 0.9em;
-              }
-              pre { 
-                background: ${printColors.surface}; 
-                padding: 12px; 
-                border-radius: 8px; 
-                overflow-x: auto;
-                margin: 0.8em 0;
-              }
-              pre code { 
-                background: none; 
-                padding: 0; 
-                color: ${printColors.textPrimary}; 
-                font-size: 0.85em;
-                line-height: 1.5;
-              }
-              blockquote { 
-                border-left: 4px solid ${printColors.kwd}; 
-                background: ${printColors.surface}; 
-                padding: 10px 16px; 
-                color: ${printColors.textSecondary}; 
-                border-radius: 0 8px 8px 0; 
-                margin: 0.8em 0;
-              }
-              ul, ol { padding-left: 20px; margin: 0.8em 0; }
-              li { margin: 0.3em 0; }
-              a { color: ${printColors.kwd}; }
-              table { 
-                width: auto; 
-                max-width: 100%;
-                min-width: 50%;
-                border-collapse: collapse; 
-                margin: 0.8em 0; 
-                border: 1px solid ${printColors.border};
-                font-size: 0.85em;
-                break-inside: avoid;
-                page-break-inside: avoid;
-                -webkit-region-break: avoid;
-              }
-              th, td { 
-                border: 1px solid ${printColors.border}; 
-                padding: 6px 12px;
-                text-align: left;
-                min-width: 80px;
-              }
-              th { 
-                background: ${printColors.surface}; 
-                color: ${printColors.kwd}; 
-                font-weight: 600;
-              }
-              tr:nth-child(even) { background: ${printColors.surface}; }
-              hr { 
-                border: none; 
-                border-top: 2px dashed ${printColors.border}; 
-                margin: 1.5em 0; 
-              }
-              img { max-width: 100%; height: auto; }
-              .katex-display { 
-                background: ${printColors.surface}; 
-                padding: 12px; 
-                border-radius: 8px; 
-                margin: 0.8em 0; 
-                overflow-x: auto;
-              }
-              /* Syntax highlighting */
-              .token.comment { color: ${printColors.textMuted}; font-style: italic; }
-              .token.keyword { color: ${printColors.kwd}; }
-              .token.string { color: ${printColors.str}; }
-              .token.number { color: ${printColors.num}; }
-              .token.function { color: ${printColors.fnc}; }
-              .token.operator { color: ${printColors.opr}; }
-              .token.class-name { color: ${printColors.typ}; }
-              .token.punctuation { color: ${printColors.textSecondary}; }
-              .token.property { color: ${printColors.num}; }
-              .token.boolean { color: ${printColors.num}; }
-              .token.attr-name { color: ${printColors.kwd}; }
-              .token.attr-value { color: ${printColors.str}; }
-              .token.selector { color: ${printColors.kwd}; }
-              .token.tag { color: ${printColors.fnc}; }
-              .token.atrule { color: ${printColors.kwd}; }
-              .tokenbuiltin { color: ${printColors.fnc}; }
-            </style>
-          </head>
-          <body>${preview.innerHTML}</body>
-          </html>
-        `);
-        printWindow.document.close();
-        setTimeout(() => printWindow.print(), 500);
-        closeMenu();
-      }
-
-      function exportAsHtml() {
-        const colors = theme.getThemeColors(currentTheme);
-        
-        // Trigger Prism highlighting first to get highlighted HTML
-        if (window.Prism) {
-          Prism.highlightAllUnder(document.getElementById('previewOutput'));
-        }
-        
-        const previewHtml = document.getElementById('previewOutput').innerHTML;
-        
-        const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Markdown Export</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <style>
-    :root {
-      --bg: ${colors.bg};
-      --surface: ${colors.surface};
-      --border: ${colors.border};
-      --textPrimary: ${colors.textPrimary};
-      --textSecondary: ${colors.textSecondary};
-      --textMuted: ${colors.textMuted};
-      --kwd: ${colors.kwd};
-      --fnc: ${colors.fnc};
-      --typ: ${colors.typ};
-      --str: ${colors.str};
-      --num: ${colors.num};
-      --opr: ${colors.opr};
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../../../sw.js').catch(function() {});
     }
-    * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--textPrimary); padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6; }
-    h1 { font-size: 2em; border-bottom: 2px solid var(--kwd); padding-bottom: 0.3em; }
-    h2 { font-size: 1.5em; border-left: 4px solid var(--typ); padding-left: 12px; }
-    h3 { font-size: 1.25em; color: var(--fnc); }
-    p { margin: 1em 0; }
-    code { background: var(--surface); color: var(--fnc); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
-    pre { background: var(--surface); padding: 16px; border-radius: 8px; overflow-x: auto; margin: 1em 0; }
-    pre code { background: none; padding: 0; color: var(--textPrimary); }
-    blockquote { border-left: 4px solid var(--kwd); background: var(--surface); padding: 12px 16px; color: var(--textSecondary); border-radius: 0 8px 8px 0; }
-    ul, ol { padding-left: 24px; }
-    a { color: var(--kwd); }
-    table { width: 100%; border-collapse: collapse; margin: 1em 0; }
-    th, td { border: 1px solid var(--border); padding: 10px; }
-    th { background: var(--surface); color: var(--kwd); }
-    /* Override Prism colors with theme colors */
-    .token.comment { color: var(--textMuted); }
-    .token.keyword { color: var(--kwd); }
-    .token.string { color: var(--str); }
-    .token.number { color: var(--num); }
-    .token.function { color: var(--fnc); }
-    .token.operator { color: var(--opr); }
-    .token.class-name { color: var(--typ); }
-    .token.punctuation { color: var(--textSecondary); }
-    .token.property { color: var(--num); }
-    .token.boolean { color: var(--num); }
-  </style>
-</head>
-<body>${previewHtml}</body>
-</html>`;
-
-        const blob = new Blob([htmlContent], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'markdown-export.html';
-        a.click();
-        URL.revokeObjectURL(url);
-        closeMenu();
-      }
-
-      function toggleMenu() {
-        document.getElementById('hamburger').classList.toggle('active');
-        document.getElementById('menuDropdown').classList.toggle('active');
-      }
-
-      function closeMenu() {
-        document.getElementById('hamburger').classList.remove('active');
-        document.getElementById('menuDropdown').classList.remove('active');
-      }
-
-      function setupEventListeners() {
-        // Theme toggle
-        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-        
-        // Logo toggle (mobile only)
-        document.getElementById('logoToggle').addEventListener('click', toggleMobileView);
-        
-        // View toggle button (mobile only)
-        document.getElementById('viewToggle').addEventListener('click', toggleMobileView);
-        
-        // Menu toggle
-        document.getElementById('hamburger').addEventListener('click', toggleMenu);
-        
-        // Menu items
-        document.getElementById('importBtn').addEventListener('click', importFile);
-        document.getElementById('exportPdfBtn').addEventListener('click', exportAsPdf);
-        document.getElementById('exportHtmlBtn').addEventListener('click', exportAsHtml);
-        
-        // File input
-        document.getElementById('fileInput').addEventListener('change', (e) => {
-          if (e.target.files[0]) {
-            handleFileImport(e.target.files[0]);
-          }
-        });
-        
-        // Markdown input
-        document.getElementById('markdownInput').addEventListener('input', renderAll);
-        
-        // Click outside to close menu
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.hamburger') && !e.target.closest('.menu-dropdown')) {
-            closeMenu();
-          }
-        });
-
-        // Re-render on theme change
-        window.addEventListener('themechange', renderAll);
-      }
-
-      // Public API
-      return { init, renderAll, toggleTheme };
-    })();
-
-    // Start app
-    document.addEventListener('DOMContentLoaded', function() {
-      App.init().catch(err => console.error('App init error:', err));
-    });
   </script>
 </body>
 </html>

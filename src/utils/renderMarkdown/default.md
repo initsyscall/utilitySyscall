@@ -20,14 +20,17 @@
   $$
 - Theme switching (night/day)
 
+
 ### Code Example
 
-```javascript
-function greet(name) {
-  return `Hello, ${name}!`;
+```zig
+const std = @import("std");
+
+pub fn main() !void {
+    const stdout = std.io.getStdOut().writer();
+    try stdout.print("Hello, {s}!\n", .{"World"});
 }
 
-console.log(greet('World'));
 ```
 
 ### Blockquote
@@ -46,3 +49,4 @@ console.log(greet('World'));
 ---
 
 *Enjoy writing!*
+

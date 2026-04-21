@@ -147,7 +147,25 @@ function renderPreview(inputId, outputId) {
   
   if (!input || !output) return false;
   
-  const html = parseMarkdown(input.value);
+  const html = parseMarkdown(input.value || input.innerText);
+  output.innerHTML = html;
+  
+  // Trigger Prism highlighting
+  setTimeout(() => {
+    if (window.Prism) {
+      Prism.highlightAllUnder(output);
+    }
+  }, 10);
+  
+  return true;
+}
+
+function renderFromText(text, outputId) {
+  const output = document.getElementById(outputId);
+  
+  if (!output) return false;
+  
+  const html = parseMarkdown(text);
   output.innerHTML = html;
   
   // Trigger Prism highlighting
@@ -161,4 +179,4 @@ function renderPreview(inputId, outputId) {
 }
 
 // Export
-window.parser = { parseMarkdown, renderPreview, initParser };
+window.parser = { parseMarkdown, renderPreview, renderFromText, initParser };

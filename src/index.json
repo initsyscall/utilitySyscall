@@ -1,8 +1,8 @@
 [
   {
     "heading": "renderMarkdown",
-    "description": "Convert markdown content to rendered PDF with syntax highlighting and katex",
+    "description": "Live markdown editor with syntax highlighting, KaTeX math rendering, and PDF/HTML export",
     "filePath": "src/utils/renderMarkdown/index.html",
-    "tags": ["markdown", "html", "render", "syntax", "highlight"]
+    "tags": ["markdown", "editor", "preview", "syntax", "highlight", "katex", "math", "pdf"]
   }
 ]
