@@ -16,17 +16,17 @@
 }
 
 :root[data-theme="daySyscall"] {
-  --bg: #FCF6F5;
-  --surface: #F2EAE9;
-  --border: #E0D1CF;
-  --textPrimary: #45383C;
-  --textSecondary: #827075;
-  --textMuted: #A8959A;
-  --kwd: #752D7A;
-  --fnc: #D62846;
-  --str: #D96677;
-  --num: #B06A3B;
-  --opr: #0F828A;
+  --bg: #ECE5DF;
+  --surface: #E3DBD4;
+  --border: #CDC2BB;
+  --textPrimary: #3D3237;
+  --textSecondary: #786B70;
+  --textMuted: #998C91;
+  --kwd: #6D2A72;
+  --fnc: #C62442;
+  --str: #CD6070;
+  --num: #A36135;
+  --opr: #0D777E;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -56,11 +56,11 @@ body::after {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--kwd) 25%, transparent);
+  background: color-mix(in srgb, var(--str) 25%, transparent);
 }
 
 :focus-visible {
-  outline: 2px solid var(--kwd);
+  outline: 2px solid var(--opr);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -179,8 +179,8 @@ body::after {
 }
 
 .theme-toggle:hover {
-  color: var(--kwd);
-  background: color-mix(in srgb, var(--kwd) 8%, transparent);
+  color: var(--fnc);
+  background: color-mix(in srgb, var(--fnc) 8%, transparent);
 }
 
 .theme-icon { width: 18px; height: 18px; display: flex; }
@@ -198,57 +198,14 @@ body::after {
   min-height: 100vh;
 }
 
-/* Hero bg glow */
+/* Hero */
 .hero {
   position: relative;
   text-align: center;
   padding: 100px 20px 64px;
-  overflow: hidden;
   opacity: 0;
   animation: fadeUp 0.8s var(--transition) forwards;
   animation-delay: 0.1s;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  width: 640px;
-  height: 640px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--kwd) 7%, transparent) 0%, transparent 60%);
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  animation: blobDrift 12s ease-in-out infinite alternate;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  width: 480px;
-  height: 480px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--fnc) 5%, transparent) 0%, transparent 60%);
-  top: 55%;
-  left: 45%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  animation: blobDrift2 16s ease-in-out infinite alternate;
-}
-
-@keyframes blobDrift {
-  0% { transform: translate(-50%, -50%) scale(1) translate(0, 0); }
-  33% { transform: translate(-50%, -50%) scale(1.08) translate(20px, -16px); }
-  66% { transform: translate(-50%, -50%) scale(0.95) translate(-12px, 20px); }
-  100% { transform: translate(-50%, -50%) scale(1.04) translate(16px, -8px); }
-}
-
-@keyframes blobDrift2 {
-  0% { transform: translate(-50%, -50%) scale(1) translate(0, 0); }
-  33% { transform: translate(-50%, -50%) scale(0.92) translate(-20px, 12px); }
-  66% { transform: translate(-50%, -50%) scale(1.06) translate(16px, -20px); }
-  100% { transform: translate(-50%, -50%) scale(0.98) translate(-8px, 16px); }
 }
 
 /* Hero content */
@@ -345,12 +302,12 @@ body::after {
 }
 
 .social-link:hover {
-  color: var(--kwd);
+  color: var(--fnc);
   transform: translateY(-2px);
 }
 
 .social-link:hover::after {
-  border-color: var(--kwd);
+  border-color: var(--fnc);
   transform: scale(1.1);
 }
 
@@ -397,14 +354,14 @@ body::after {
 }
 
 .section-head:hover {
-  background: color-mix(in srgb, var(--kwd) 4%, transparent);
+  background: color-mix(in srgb, var(--num) 6%, transparent);
 }
 
 .section-hash {
-  color: var(--kwd);
+  color: var(--opr);
   font-weight: 700;
   font-size: 16px;
-  opacity: 0.6;
+  opacity: 0.7;
   transition: opacity var(--transition);
 }
 
@@ -425,7 +382,7 @@ body::after {
   color: var(--textMuted);
   padding: 1px 8px;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--kwd) 6%, var(--bg));
+  background: color-mix(in srgb, var(--str) 8%, var(--bg));
   font-variant-numeric: tabular-nums;
 }
 
@@ -466,7 +423,7 @@ body::after {
 .card {
   position: relative;
   background:
-    radial-gradient(ellipse at 0% 100%, color-mix(in srgb, var(--kwd) 3%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 100%, color-mix(in srgb, var(--opr) 3%, transparent) 0%, transparent 50%),
     var(--surface);
   border-radius: var(--radius);
   padding: 28px;
@@ -505,20 +462,20 @@ body::after {
   opacity: 0;
   transition: opacity 0.6s var(--transition);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--kwd) 25%, transparent),
-    0 24px 56px -16px var(--kwd),
-    0 0 80px -24px color-mix(in srgb, var(--kwd) 15%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--str) 25%, transparent),
+    0 24px 56px -16px var(--str),
+    0 0 80px -24px color-mix(in srgb, var(--str) 15%, transparent);
 }
 
 .card:hover {
   transform: translateY(-6px) scale(1.01);
   background:
-    radial-gradient(ellipse at 0% 100%, color-mix(in srgb, var(--kwd) 6%, transparent) 0%, transparent 60%),
-    radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--fnc) 3%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 100%, color-mix(in srgb, var(--opr) 6%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--str) 4%, transparent) 0%, transparent 50%),
     var(--surface);
   box-shadow:
     0 1px 2px color-mix(in srgb, #000 6%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--kwd) 15%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--fnc) 15%, transparent),
     0 20px 48px -12px color-mix(in srgb, #000 30%, transparent);
 }
 
@@ -550,19 +507,19 @@ body::after {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--kwd);
+  background: var(--str);
   flex-shrink: 0;
   transition: all var(--transition);
   opacity: 0.4;
 }
 
 .card:hover .card-title {
-  color: var(--kwd);
+  color: var(--fnc);
 }
 
 .card:hover .card-title::before {
   opacity: 1;
-  box-shadow: 0 0 8px var(--kwd);
+  box-shadow: 0 0 8px var(--str);
   transform: scale(1.2);
 }
 
@@ -585,14 +542,14 @@ body::after {
   padding: 3px 10px;
   border-radius: 20px;
   color: var(--textMuted);
-  background: color-mix(in srgb, var(--kwd) 5%, var(--bg));
+  background: color-mix(in srgb, var(--num) 8%, var(--bg));
   transition: all var(--transition);
   letter-spacing: 0.2px;
 }
 
 .card:hover .tag {
-  color: color-mix(in srgb, var(--textSecondary) 70%, var(--kwd));
-  background: color-mix(in srgb, var(--kwd) 10%, var(--bg));
+  color: color-mix(in srgb, var(--textSecondary) 60%, var(--opr));
+  background: color-mix(in srgb, var(--num) 12%, var(--bg));
 }
 
 .no-results {

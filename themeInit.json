@@ -23,18 +23,18 @@
     "daySyscall": {
       "type": "light",
       "colors": {
-        "bg": "#fcf0e0",
-        "surface": "#f5e8d8",
-        "border": "#e0d0c0",
-        "textPrimary": "#201820",
-        "textSecondary": "#584870",
-        "textMuted": "#a888a8",
-        "kwd": "#8040e0",
-        "fnc": "#d03060",
-        "typ": "#9060d0",
-        "str": "#c06080",
-        "num": "#c08830",
-        "opr": "#30a890"
+        "bg": "#ECE5DF",
+        "surface": "#E3DBD4",
+        "border": "#CDC2BB",
+        "textPrimary": "#3D3237",
+        "textSecondary": "#786B70",
+        "textMuted": "#998C91",
+        "kwd": "#6D2A72",
+        "fnc": "#C62442",
+        "typ": "#9550B0",
+        "str": "#CD6070",
+        "num": "#A36135",
+        "opr": "#0D777E"
       }
     }
   }
