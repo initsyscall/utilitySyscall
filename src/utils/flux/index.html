@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0b1a">
+  <title>flux | utils.Syscall</title>
+  <link rel="manifest" href="../../../manifest.json">
+  <link rel="icon" href="../../../icons/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+  <div id="game">
+    <div id="target"></div>
+    <div id="missFlash"></div>
+    <div id="score">0</div>
+    <div id="highScore">best 0</div>
+
+    <div class="overlay active" id="startOverlay">
+      <div class="overlay-title">flux</div>
+      <p class="overlay-sub">Click the target before it vanishes.<br>Speed increases every hit.<br>One miss &ndash; game over.</p>
+      <button class="overlay-btn" id="startBtn">Click to Start</button>
+    </div>
+
+    <div class="overlay" id="gameOverOverlay">
+      <div class="overlay-title" style="font-size:36px;">flux</div>
+      <div class="overlay-stats">
+        <div class="overlay-stat" id="finalScore">0</div>
+        <div class="overlay-stat-label">score</div>
+      </div>
+      <div class="overlay-best-label">best <span id="finalBest">0</span></div>
+      <button class="overlay-btn" id="restartBtn">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../../../sw.js').catch(function() {});
+    }
+  </script>
+  <script src="js/game.js"></script>
+</body>
+</html>

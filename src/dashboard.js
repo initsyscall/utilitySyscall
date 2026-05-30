@@ -1,6 +1,8 @@
 ;(function() {
   'use strict'
 
+  var SECTION_KEY = 'flux-sections'
+
   var themeData = {
     nightSyscall: {
       colors: {
@@ -21,6 +23,9 @@
   }
 
   var currentTheme = 'nightSyscall'
+  var activeQuery = ''
+  var sectionState = {}
+  var sectionMeta = {}
 
   function setTheme(theme) {
     if (!themeData[theme]) theme = 'nightSyscall'
@@ -48,31 +53,116 @@
     return d.innerHTML
   }
 
-  function renderCards(data) {
+  function loadSectionState() {
+    try {
+      var s = localStorage.getItem(SECTION_KEY)
+      sectionState = s ? JSON.parse(s) : {}
+    } catch (_) { sectionState = {} }
+  }
+
+  function saveSectionState() {
+    try { localStorage.setItem(SECTION_KEY, JSON.stringify(sectionState)) } catch (_) {}
+  }
+
+  function cardHtml(item, delay) {
+    return '<article class="card" style="animation-delay:' + delay + 's" onclick="window.location.href=\'' + item.filePath + '\'">' +
+      '<h2 class="card-title">' + esc(item.heading) + '</h2>' +
+      '<p class="card-description">' + esc(item.description) + '</p>' +
+      '<div class="card-tags">' +
+      item.tags.map(function(t) { return '<span class="tag">' + esc(t) + '</span>' }).join('') +
+      '</div></article>'
+  }
+
+  function renderSections(data) {
     var c = document.getElementById('cardsContainer')
     var n = document.getElementById('noResults')
     if (!c || !n) return
     if (!data.length) { c.innerHTML = ''; n.style.display = 'block'; return }
     n.style.display = 'none'
-    c.innerHTML = data.map(function(item, i) {
-      return '<article class="card" style="animation-delay:' + (0.08 + i * 0.06) + 's" onclick="window.location.href=\'' + item.filePath + '\'">' +
-        '<h2 class="card-title">' + esc(item.heading) + '</h2>' +
-        '<p class="card-description">' + esc(item.description) + '</p>' +
-        '<div class="card-tags">' +
-        item.tags.map(function(t) { return '<span class="tag">' + esc(t) + '</span>' }).join('') +
-        '</div></article>'
-    }).join('')
+
+    // Group by section, sort A-Z
+    var groups = {}
+    data.forEach(function(item) {
+      var sec = item.section || 'other'
+      if (!groups[sec]) groups[sec] = []
+      groups[sec].push(item)
+    })
+
+    var sectionNames = Object.keys(groups).sort(function(a, b) {
+      if (a === 'minigames') return 1
+      if (b === 'minigames') return -1
+      return a.localeCompare(b)
+    })
+    var html = ''
+    var globalDelay = 0
+
+    sectionNames.forEach(function(sec) {
+      groups[sec].sort(function(a, b) {
+        return a.heading.toLowerCase().localeCompare(b.heading.toLowerCase())
+      })
+
+      var isOpen = sectionState[sec] !== false
+      var count = groups[sec].length
+      var secEsc = esc(sec)
+
+      html += '<div class="section" data-section="' + secEsc + '">' +
+        '<button class="section-head" aria-expanded="' + isOpen + '">' +
+        '<span class="section-hash">#</span>' +
+        '<span class="section-name">' + secEsc + '</span>' +
+        '<span class="section-count">' + count + '</span>' +
+        '<span class="section-arrow">' + (isOpen ? '\u25BC' : '\u25B6') + '</span>' +
+        '</button>' +
+        '<div class="section-body"' + (isOpen ? '' : ' style="display:none"') + '>' +
+        '<div class="cards-grid">'
+
+      groups[sec].forEach(function(item, i) {
+        html += cardHtml(item, 0.08 + globalDelay * 0.04)
+        globalDelay++
+      })
+
+      html += '</div></div></div>'
+    })
+
+    c.innerHTML = html
+
+    c.querySelectorAll('.section-head').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var sec = btn.closest('.section').getAttribute('data-section')
+        var body = btn.nextElementSibling
+        var isOpen = body.style.display !== 'none'
+        body.style.display = isOpen ? 'none' : ''
+        btn.setAttribute('aria-expanded', !isOpen)
+        btn.querySelector('.section-arrow').textContent = isOpen ? '\u25B6' : '\u25BC'
+        sectionState[sec] = !isOpen
+        saveSectionState()
+      })
+    })
+  }
+
+  function renderFlat(data) {
+    var c = document.getElementById('cardsContainer')
+    var n = document.getElementById('noResults')
+    if (!c || !n) return
+    if (!data.length) { c.innerHTML = ''; n.style.display = 'block'; return }
+    n.style.display = 'none'
+    c.innerHTML = '<div class="cards-grid">' +
+      data.map(function(item, i) { return cardHtml(item, 0.08 + i * 0.04) }).join('') +
+      '</div>'
   }
 
   function filter(q) {
+    activeQuery = q
     q = q.toLowerCase().trim()
-    if (!q) { renderCards(window.__utils); return }
+    if (!q) {
+      renderSections(window.__utils)
+      return
+    }
     var f = window.__utils.filter(function(item) {
       return item.heading.toLowerCase().indexOf(q) !== -1 ||
         item.description.toLowerCase().indexOf(q) !== -1 ||
-        item.tags.some(function(t) { return t.toLowerCase().indexOf(q) !== -1 })
+        (item.tags || []).some(function(t) { return t.toLowerCase().indexOf(q) !== -1 })
     })
-    renderCards(f)
+    renderFlat(f)
   }
 
   function hideSplash() {
@@ -87,11 +177,12 @@
     var saved = 'nightSyscall'
     try { saved = localStorage.getItem('theme') || 'nightSyscall' } catch (_) {}
     setTheme(themeData[saved] ? saved : 'nightSyscall')
+    loadSectionState()
 
     fetch('src/index.json')
       .then(function(r) { return r.json() })
-      .then(function(d) { window.__utils = d; renderCards(d) })
-      .catch(function() { window.__utils = []; renderCards([]) })
+      .then(function(d) { window.__utils = d; renderSections(d) })
+      .catch(function() { window.__utils = []; renderSections([]) })
 
     var toggle = document.getElementById('themeToggle')
     if (toggle) toggle.addEventListener('click', function() {

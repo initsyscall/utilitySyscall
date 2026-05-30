@@ -365,25 +365,99 @@ body::after {
   opacity: 1;
 }
 
-/* Cards */
+/* Sections */
 .cards-container {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
   padding-bottom: 64px;
 }
 
+.section {
+  margin-bottom: 12px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  text-align: left;
+  transition: all var(--transition);
+  border-radius: 8px;
+}
+
+.section-head:hover {
+  background: color-mix(in srgb, var(--kwd) 4%, transparent);
+}
+
+.section-hash {
+  color: var(--kwd);
+  font-weight: 700;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: opacity var(--transition);
+}
+
+.section-head:hover .section-hash {
+  opacity: 1;
+}
+
+.section-name {
+  color: var(--textSecondary);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-transform: lowercase;
+}
+
+.section-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--textMuted);
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--kwd) 6%, var(--bg));
+  font-variant-numeric: tabular-nums;
+}
+
+.section-arrow {
+  font-size: 9px;
+  color: var(--textMuted);
+  transition: transform var(--transition);
+  width: 14px;
+  text-align: center;
+}
+
+.section-body {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+/* Cards grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
 @media (min-width: 640px) {
-  .cards-container {
+  .cards-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
 }
 
 @media (min-width: 1024px) {
-  .cards-container {
+  .cards-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
   }
@@ -410,7 +484,6 @@ body::after {
     inset 0 1px 0 color-mix(in srgb, #fff 2%, transparent);
 }
 
-/* Permanent top accent */
 .card::before {
   content: '';
   position: absolute;
@@ -423,7 +496,6 @@ body::after {
   pointer-events: none;
 }
 
-/* Hover glow ring */
 .card::after {
   content: '';
   position: absolute;

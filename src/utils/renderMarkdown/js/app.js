@@ -1,6 +1,8 @@
 ;(function() {
   'use strict';
 
+  var STORAGE_KEY = 'renderMarkdown-content';
+
   var App = {
     currentTheme: 'nightSyscall',
     mobileView: 'preview',
@@ -13,10 +15,11 @@
       editor.initEditor('markdownInput', 'editorHighlight', '');
 
       window.editorOnChange = function() {
+        App.saveContent();
         App.renderAll();
       };
 
-      this.loadDefaultMarkdown();
+      this.loadContent();
       this.setupEventListeners();
       this.initMobileView();
 
@@ -76,7 +79,18 @@
       }, 50);
     },
 
-    loadDefaultMarkdown: function() {
+    saveContent: function() {
+      try { localStorage.setItem(STORAGE_KEY, editor.getValue()); } catch (_) {}
+    },
+
+    loadContent: function() {
+      var saved;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch (_) {}
+      if (saved) {
+        editor.setValue(saved);
+        App.renderAll();
+        return;
+      }
       fetch('default.md')
         .then(function(r) { return r.text(); })
         .then(function(text) {
@@ -94,6 +108,7 @@
       var reader = new FileReader();
       reader.onload = function(e) {
         editor.setValue(e.target.result);
+        App.saveContent();
         App.renderAll();
         App.closeMenu();
       };

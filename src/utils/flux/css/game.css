@@ -1,0 +1,223 @@
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #0d0b1a;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+#game {
+  position: fixed;
+  inset: 0;
+  cursor: crosshair;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(162, 119, 255, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(255, 51, 102, 0.04) 0%, transparent 60%),
+    #0d0b1a;
+}
+
+/* Score */
+#score {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 48px;
+  font-weight: 700;
+  color: #E0DEF4;
+  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+  z-index: 10;
+  transition: transform 0.1s;
+}
+
+#score.pop {
+  transform: translateX(-50%) scale(1.15);
+}
+
+#highScore {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #6E6A86;
+  letter-spacing: 0.5px;
+  z-index: 10;
+}
+
+/* Target */
+#target {
+  position: fixed;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #A277FF, #FF3366);
+  cursor: crosshair;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+#target.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#target::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: inherit;
+  filter: blur(12px);
+  opacity: 0.3;
+  z-index: -1;
+}
+
+#target.hit {
+  animation: hitBurst 0.2s ease forwards;
+}
+
+@keyframes hitBurst {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+#target.miss {
+  animation: missShake 0.3s ease;
+}
+
+@keyframes missShake {
+  0%, 100% { transform: translateX(0); opacity: 1; }
+  20% { transform: translateX(-8px) rotate(-3deg); }
+  40% { transform: translateX(8px) rotate(3deg); }
+  60% { transform: translateX(-4px); opacity: 0.3; }
+  80% { transform: translateX(4px); }
+}
+
+/* Overlays */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  background: rgba(13, 11, 26, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.overlay-title {
+  font-size: 52px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #A277FF, #FF3366);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -2px;
+  margin-bottom: 12px;
+}
+
+.overlay-sub {
+  color: #6E6A86;
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+.overlay-btn {
+  margin-top: 28px;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #A277FF, #FF3366);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+.overlay-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(162, 119, 255, 0.3);
+}
+
+.overlay-btn:active {
+  transform: scale(0.97);
+}
+
+.overlay-stats {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.overlay-stat {
+  color: #E0DEF4;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.overlay-stat-label {
+  color: #6E6A86;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.overlay-best-label {
+  color: #6E6A86;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.overlay-best-label span {
+  color: #F6C177;
+  font-weight: 600;
+}
+
+/* Miss indicator */
+#missFlash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(255, 51, 102, 0.08) 100%);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+#missFlash.active {
+  animation: flashBlood 0.3s ease forwards;
+}
+
+@keyframes flashBlood {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Screen shake */
+.shake {
+  animation: screenShake 0.15s ease;
+}
+
+@keyframes screenShake {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(-3px, 2px); }
+  50% { transform: translate(3px, -2px); }
+  75% { transform: translate(-2px, -1px); }
+}
