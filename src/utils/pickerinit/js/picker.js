@@ -22,8 +22,6 @@
     els.preview = $('preview')
     els.hexInput = $('hexInput')
     els.modeBtns = document.querySelectorAll('.mode-btn')
-    els.swatchesContainer = $('swatchesContainer')
-    els.addSwatchBtn = $('addSwatch')
     els.schemesContainer = $('schemesContainer')
     els.sliders = {
       r: { slider: $('rSlider'), input: $('rInput') },
@@ -86,14 +84,6 @@
 
     /* Click preview to copy */
     els.preview.addEventListener('click', onCopy)
-
-    /* Swatches */
-    Swatches.load()
-    Swatches.onChange(function() { renderSwatches() })
-    renderSwatches()
-    els.addSwatchBtn.addEventListener('click', function() {
-      Swatches.add(color.r, color.g, color.b, color.a)
-    })
 
     /* Schemes toggle */
     els.schemesToggle = $('schemesToggle')
@@ -440,14 +430,6 @@
       els.preview.style.boxShadow = ''
       els.preview.style.transform = ''
     }, 250)
-  }
-
-  /* ── Swatches ── */
-  function renderSwatches() {
-    Swatches.render(els.swatchesContainer, function(c) {
-      color.r = c.r; color.g = c.g; color.b = c.b; color.a = c.a !== undefined ? c.a : 1
-      updateAll()
-    })
   }
 
   /* ── Schemes ── */

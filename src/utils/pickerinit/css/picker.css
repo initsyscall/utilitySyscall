@@ -302,68 +302,6 @@ body {
 
 .channel-input:focus { border-color: #A277FF; }
 
-/* ── Swatches ── */
-.swatch-section { }
-
-.swatch-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.swatch-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: #6E6A86;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.swatch-add {
-  width: 28px;
-  height: 28px;
-  border: 1px dashed #6E6A86;
-  border-radius: 7px;
-  background: transparent;
-  color: #6E6A86;
-  font-size: 17px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-  font-family: inherit;
-  line-height: 1;
-}
-
-.swatch-add:active {
-  border-color: #A277FF;
-  color: #A277FF;
-  background: rgba(162, 119, 255, 0.12);
-}
-
-.swatch-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-}
-
-.swatch {
-  aspect-ratio: 1;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.06);
-  cursor: pointer;
-  transition: transform 0.12s ease;
-  padding: 0;
-}
-
-.swatch:active { transform: scale(0.9); }
-
-@media (min-width: 720px) {
-  .swatch:hover { transform: scale(1.1); z-index: 2; position: relative; border-color: rgba(255,255,255,0.15); }
-}
-
 /* ── Schemes ── */
 .schemes-toggle {
   width: 100%;

@@ -156,8 +156,7 @@
     }
     var f = window.__utils.filter(function(item) {
       return item.heading.toLowerCase().indexOf(q) !== -1 ||
-        item.description.toLowerCase().indexOf(q) !== -1 ||
-        (item.tags || []).some(function(t) { return t.toLowerCase().indexOf(q) !== -1 })
+        item.description.toLowerCase().indexOf(q) !== -1
     })
     renderFlat(f)
   }

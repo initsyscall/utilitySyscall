@@ -3,21 +3,18 @@
     "heading": "renderMarkdown",
     "description": "Live markdown editor with syntax highlighting, KaTeX math rendering, and PDF/HTML export",
     "filePath": "src/utils/renderMarkdown/index.html",
-    "section": "utils",
-    "tags": ["markdown", "editor", "preview", "syntax", "highlight", "katex", "math", "pdf"]
+    "section": "utils"
   },
   {
     "heading": "flux",
     "description": "A high-cortisol reaction game. Click the target before it vanishes\u2014speed increases every hit, one miss ends it.",
     "filePath": "src/utils/flux/index.html",
-    "section": "minigames",
-    "tags": ["game", "reaction", "fast", "flux", "cortisol"]
+    "section": "minigames"
   },
   {
     "heading": "pickerinit",
-    "description": "Spectral color picker with real-time schemes, swatches, and multi-format output — pickerinit",
+    "description": "Spectral color picker with real-time schemes, swatches, and multi-format output",
     "filePath": "src/utils/pickerinit/index.html",
-    "section": "utils",
-    "tags": ["color", "picker", "hex", "rgb", "hsl", "design", "schemes"]
+    "section": "utils"
   }
 ]
