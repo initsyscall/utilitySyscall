@@ -531,27 +531,6 @@ body::after {
   flex: 1;
 }
 
-.card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tag {
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 20px;
-  color: var(--textMuted);
-  background: color-mix(in srgb, var(--num) 8%, var(--bg));
-  transition: all var(--transition);
-  letter-spacing: 0.2px;
-}
-
-.card:hover .tag {
-  color: color-mix(in srgb, var(--textSecondary) 60%, var(--opr));
-  background: color-mix(in srgb, var(--num) 12%, var(--bg));
-}
-
 .no-results {
   position: relative;
   z-index: 1;

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0d0b1a">
+  <title>pickerinit | utils.Syscall</title>
+  <link rel="manifest" href="../../../manifest.json">
+  <link rel="icon" href="../../../icons/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/picker.css">
+</head>
+<body>
+  <div class="picker">
+
+    <div class="canvas-wrap" style="--cx:50%;--cy:50%">
+      <canvas id="spectrum"></canvas>
+    </div>
+
+    <div class="preview-bar">
+      <div id="preview" title="Click to copy"></div>
+      <div class="preview-controls">
+        <input type="text" class="hex-input" id="hexInput" value="#A277FF" spellcheck="false">
+      </div>
+    </div>
+
+    <div class="mode-row">
+      <button class="mode-btn active" data-mode="hex">HEX</button>
+      <button class="mode-btn" data-mode="rgb">RGB</button>
+      <button class="mode-btn" data-mode="hsl">HSL</button>
+    </div>
+
+    <div class="bar-row">
+      <div class="bar-wrap">
+        <canvas id="hueBar"></canvas>
+        <div class="bar-thumb"></div>
+      </div>
+      <div class="bar-wrap">
+        <canvas id="alphaBar"></canvas>
+        <div class="bar-thumb"></div>
+      </div>
+    </div>
+
+    <div class="channel-group" id="hslGroup">
+      <div class="channel-group-title">HSL</div>
+      <div class="channel-row"><span class="channel-label">H</span><input type="range" class="channel-slider" id="hSlider" min="0" max="360" value="260"><input type="text" class="channel-input" id="hInput" value="260"></div>
+      <div class="channel-row"><span class="channel-label">S</span><input type="range" class="channel-slider" id="sSlider" min="0" max="100" value="100"><input type="text" class="channel-input" id="sInput" value="100"></div>
+      <div class="channel-row"><span class="channel-label">L</span><input type="range" class="channel-slider" id="lSlider" min="0" max="100" value="73"><input type="text" class="channel-input" id="lInput" value="73"></div>
+    </div>
+
+    <div class="channel-group" id="rgbGroup">
+      <div class="channel-group-title">RGB</div>
+      <div class="channel-row"><span class="channel-label">R</span><input type="range" class="channel-slider" id="rSlider" min="0" max="255" value="162"><input type="text" class="channel-input" id="rInput" value="162"></div>
+      <div class="channel-row"><span class="channel-label">G</span><input type="range" class="channel-slider" id="gSlider" min="0" max="255" value="119"><input type="text" class="channel-input" id="gInput" value="119"></div>
+      <div class="channel-row"><span class="channel-label">B</span><input type="range" class="channel-slider" id="bSlider" min="0" max="255" value="255"><input type="text" class="channel-input" id="bInput" value="255"></div>
+      <div class="channel-row"><span class="channel-label">A</span><input type="range" class="channel-slider" id="aSlider" min="0" max="1" step="0.01" value="1"><input type="text" class="channel-input" id="aInput" value="1.00"></div>
+    </div>
+
+    <div class="swatch-section">
+      <div class="swatch-header">
+        <span class="swatch-title">Swatches</span>
+        <button class="swatch-add" id="addSwatch" title="Save color">+</button>
+      </div>
+      <div class="swatch-grid" id="swatchesContainer"></div>
+    </div>
+
+    <div class="schemes-section">
+      <button class="schemes-toggle" id="schemesToggle">Schemes</button>
+      <div class="schemes-body" id="schemesBody">
+        <div id="schemesContainer"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../../../sw.js').catch(function() {});
+    }
+  </script>
+  <script src="js/color.js"></script>
+  <script src="js/swatches.js"></script>
+  <script src="js/schemes.js"></script>
+  <script src="js/picker.js"></script>
+</body>
+</html>

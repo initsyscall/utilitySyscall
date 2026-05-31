@@ -12,5 +12,12 @@
     "filePath": "src/utils/flux/index.html",
     "section": "minigames",
     "tags": ["game", "reaction", "fast", "flux", "cortisol"]
+  },
+  {
+    "heading": "pickerinit",
+    "description": "Spectral color picker with real-time schemes, swatches, and multi-format output — pickerinit",
+    "filePath": "src/utils/pickerinit/index.html",
+    "section": "utils",
+    "tags": ["color", "picker", "hex", "rgb", "hsl", "design", "schemes"]
   }
 ]
