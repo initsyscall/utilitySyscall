@@ -67,10 +67,7 @@
   function cardHtml(item, delay) {
     return '<article class="card" style="animation-delay:' + delay + 's" onclick="window.location.href=\'' + item.filePath + '\'">' +
       '<h2 class="card-title">' + esc(item.heading) + '</h2>' +
-      '<p class="card-description">' + esc(item.description) + '</p>' +
-      '<div class="card-tags">' +
-      item.tags.map(function(t) { return '<span class="tag">' + esc(t) + '</span>' }).join('') +
-      '</div></article>'
+      '<p class="card-description">' + esc(item.description) + '</p></article>'
   }
 
   function renderSections(data) {

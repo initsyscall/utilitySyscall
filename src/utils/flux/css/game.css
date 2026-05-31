@@ -75,27 +75,6 @@ html, body {
   z-index: -1;
 }
 
-#target.hit {
-  animation: hitBurst 0.2s ease forwards;
-}
-
-@keyframes hitBurst {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(1.8); opacity: 0; }
-}
-
-#target.miss {
-  animation: missShake 0.3s ease;
-}
-
-@keyframes missShake {
-  0%, 100% { transform: translateX(0); opacity: 1; }
-  20% { transform: translateX(-8px) rotate(-3deg); }
-  40% { transform: translateX(8px) rotate(3deg); }
-  60% { transform: translateX(-4px); opacity: 0.3; }
-  80% { transform: translateX(4px); }
-}
-
 /* Overlays */
 .overlay {
   position: fixed;

@@ -2,18 +2,21 @@
   'use strict'
 
   var STORAGE_KEY = 'flux-highscore'
-  var state = 'idle' // idle | playing | gameover
+  var state = 'idle'
   var score = 0
   var highScore = 0
   var timeout = 1500
   var decay = 5
   var timerId = null
   var targetSize = 60
+  var spawnTime = 0
 
   var targetEl, scoreEl, highScoreEl
   var startOverlay, gameOverOverlay
   var finalScoreEl, finalBestEl
   var missFlashEl, gameEl
+
+  var PARTICLE_COLORS = ['#A277FF', '#FF3366', '#F087BD', '#F6C177', '#80FFEA']
 
   function $(id) { return document.getElementById(id) }
 
@@ -68,6 +71,7 @@
 
     requestAnimationFrame(function() {
       targetEl.classList.add('visible')
+      spawnTime = performance.now()
     })
 
     clearTimeout(timerId)
@@ -81,24 +85,85 @@
     e.stopPropagation()
     clearTimeout(timerId)
 
+    var rect = targetEl.getBoundingClientRect()
+    var cx = rect.left + rect.width / 2
+    var cy = rect.top + rect.height / 2
+    var rt = performance.now() - spawnTime
+    showBurst(cx, cy, rt)
+
     score++
     updateScore()
 
-    targetEl.classList.add('hit')
     targetEl.classList.remove('visible')
+    targetEl.style.display = 'none'
 
     scoreEl.classList.remove('pop')
     void scoreEl.offsetWidth
     scoreEl.classList.add('pop')
 
-    // Difficulty scaling
     if (score > 100) decay = 10
     else if (score > 50) decay = 8
     else if (score > 25) decay = 6
     timeout = Math.max(300, timeout - decay)
     targetSize = Math.max(24, 60 - Math.floor(score / 3))
 
-    setTimeout(spawnTarget, 150)
+    setTimeout(spawnTarget, 120)
+  }
+
+  function showBurst(cx, cy, ms) {
+    var count = 14
+    var container = document.createElement('div')
+    container.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:15'
+    gameEl.appendChild(container)
+
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement('div')
+      var angle = Math.random() * 2 * Math.PI
+      var dist = 40 + Math.random() * 90
+      var dx = Math.cos(angle) * dist
+      var dy = Math.sin(angle) * dist
+      var size = 4 + Math.random() * 6
+      var color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)]
+      var dur = 300 + Math.random() * 400
+
+      p.style.cssText =
+        'position:fixed;left:' + cx + 'px;top:' + cy + 'px;' +
+        'width:' + size + 'px;height:' + size + 'px;border-radius:50%;' +
+        'background:' + color + ';' +
+        'transform:translate(0,0);opacity:1;' +
+        'transition:transform ' + dur + 'ms cubic-bezier(.22,1,.36,1),opacity ' + (dur + 100) + 'ms ease'
+      container.appendChild(p)
+
+      requestAnimationFrame(function() {
+        p.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'
+        p.style.opacity = '0'
+      })
+    }
+
+    var label = document.createElement('div')
+    label.textContent = Math.round(ms) + 'ms'
+    label.style.cssText =
+      'position:fixed;left:' + cx + 'px;top:' + cy + 'px;' +
+      'font-size:14px;font-weight:700;color:#E0DEF4;' +
+      'transform:translate(-50%,-50%) scale(0.5);opacity:0;' +
+      'transition:transform 350ms cubic-bezier(.34,1.56,.64,1),opacity 300ms ease;' +
+      'pointer-events:none;z-index:16'
+    gameEl.appendChild(label)
+
+    requestAnimationFrame(function() {
+      label.style.transform = 'translate(-50%,-50%) scale(1)'
+      label.style.opacity = '1'
+    })
+
+    setTimeout(function() {
+      label.style.transform = 'translate(-50%,-120%) scale(0.8)'
+      label.style.opacity = '0'
+    }, 500)
+
+    setTimeout(function() {
+      if (container.parentNode) container.parentNode.removeChild(container)
+      if (label.parentNode) label.parentNode.removeChild(label)
+    }, 1200)
   }
 
   function onMissClick(e) {
@@ -113,8 +178,7 @@
     state = 'gameover'
 
     clearTimeout(timerId)
-    targetEl.classList.remove('visible')
-    targetEl.classList.add('miss')
+    targetEl.style.display = 'none'
 
     missFlashEl.classList.remove('active')
     void missFlashEl.offsetWidth
@@ -134,7 +198,6 @@
     finalBestEl.textContent = highScore + (score === highScore && score > 0 ? ' NEW' : '')
 
     setTimeout(function() {
-      targetEl.style.display = 'none'
       gameOverOverlay.classList.add('active')
       updateHighScore()
     }, 400)
