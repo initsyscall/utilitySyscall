@@ -5,31 +5,31 @@
   var ready = false;
   var loading = false;
 
-  function getTheme() {
-    if (window.theme) {
-      return window.theme.getCurrentTheme() === 'nightSyscall' ? 'dark' : 'default';
-    }
-    return 'dark';
-  }
-
   function readVar(name) {
     return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim();
   }
 
+  function v(name, fallback) { var x = readVar(name); return x || fallback; }
+
   function getThemeVars() {
     return {
-      background: readVar('bg'),
-      primaryBackground: readVar('surface'),
-      primaryBorderColor: readVar('border'),
-      primaryTextColor: readVar('textPrimary'),
-      secondaryTextColor: readVar('textSecondary'),
-      tertiaryTextColor: readVar('textMuted'),
-      primaryColor: readVar('kwd'),
-      secondaryColor: readVar('fnc'),
-      tertiaryColor: readVar('typ'),
-      errorBkgColor: readVar('fnc') + '22',
-      errorTextColor: readVar('fnc'),
-      lineColor: readVar('border'),
+      background: v('bg'),
+      mainBkg: v('surface'),
+      nodeBorder: v('border'),
+      nodeTextColor: v('textPrimary'),
+      lineColor: v('border'),
+      clusterBkg: v('surface'),
+      clusterBorder: v('border'),
+      titleColor: v('textPrimary'),
+      primaryColor: v('kwd'),
+      primaryTextColor: v('textPrimary'),
+      primaryBorderColor: v('border'),
+      secondaryColor: v('fnc'),
+      tertiaryColor: v('typ'),
+      tertiaryTextColor: v('textSecondary'),
+      secondaryTextColor: v('textSecondary'),
+      errorBkgColor: v('fnc') + '22',
+      errorTextColor: v('fnc'),
       fontFamily: 'system-ui, -apple-system, sans-serif',
       fontSize: '14px',
     };
@@ -53,7 +53,7 @@
 
       script.onload = function() {
         window.mermaid.initialize({
-          theme: getTheme(),
+          theme: 'base',
           themeVariables: getThemeVars(),
           startOnLoad: false,
           securityLevel: 'loose',
@@ -108,7 +108,7 @@
   function updateTheme() {
     if (!ready || !window.mermaid) return;
     window.mermaid.initialize({
-      theme: getTheme(),
+      theme: 'base',
       themeVariables: getThemeVars(),
     });
   }
