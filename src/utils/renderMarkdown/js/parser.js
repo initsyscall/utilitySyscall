@@ -44,6 +44,22 @@ function sanitizeHtml(html) {
     .replace(/javascript\s*:/gi, '');
 }
 
+function htmlToCallouts(html) {
+  return html.replace(/<blockquote>([\s\S]*?)<\/blockquote>/gi, function(m, inner) {
+    var m2 = inner.match(/^\s*<p>\[!(\w+)\]\s*(.*?)<\/p>\s*([\s\S]*)$/i);
+    if (!m2) return m;
+    var type = m2[1].toLowerCase();
+    var firstContent = m2[2];
+    var restContent = m2[3];
+    return '<div class="callout callout-' + type + '">' +
+      '<div class="callout-title">' + m2[1] + '</div>' +
+      '<div class="callout-content">' +
+      (firstContent ? '<p>' + firstContent + '</p>' : '') +
+      restContent +
+      '</div></div>';
+  });
+}
+
 function parseMarkdown(text) {
   if (!text || typeof text !== 'string') {
     return '';
@@ -62,6 +78,9 @@ function parseMarkdown(text) {
       
       // Sanitize XSS from raw HTML passthrough
       html = sanitizeHtml(html);
+      
+      // Convert Obsidian callouts
+      html = htmlToCallouts(html);
       
       // Convert mermaid code blocks to diagram containers
       html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, '<div class="mermaid">$1</div>');
@@ -86,10 +105,38 @@ function parseMarkdown(text) {
 }
 
 function simpleParse(text) {
-  let html = text;
+  var html = text;
 
-  // Escape HTML
+  // Blockquotes and callouts (before HTML escaping — raw > is still present)
+  var bqMap = [];
+  html = html.replace(/((?:^> .+(?:\n|$))+)/gm, function(match) {
+    var idx = bqMap.length;
+    var lines = match.trim().split('\n');
+    var contentLines = lines.map(function(l) { return l.replace(/^> /, ''); });
+    var content = contentLines.join('\n');
+
+    var cMatch = content.match(/^\[!(\w+)\]\s*(.*)$/i);
+    if (cMatch) {
+      var type = cMatch[1].toLowerCase();
+      var title = cMatch[1];
+      var inlineContent = cMatch[2].trim();
+      var restLines = contentLines.slice(1).join('\n').trim();
+      var body = inlineContent
+        ? (restLines ? inlineContent + '\n' + restLines : inlineContent)
+        : restLines;
+      bqMap.push('<div class="callout callout-' + type + '"><div class="callout-title">' +
+        title + '</div><div class="callout-content">' + body + '</div></div>');
+    } else {
+      bqMap.push('<blockquote>' + content + '</blockquote>');
+    }
+    return '##BQ' + idx + '##';
+  });
+
+  // Escape HTML (##BQ0## placeholders survive — no <>& in them)
   html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // Restore blockquotes/callouts
+  html = html.replace(/##BQ(\d+)##/g, function(m, idx) { return bqMap[parseInt(idx)]; });
 
   // Mermaid diagrams (must come before general code blocks)
   html = html.replace(/```mermaid\n?([\s\S]*?)```/g, '<div class="mermaid">$1</div>');
@@ -123,9 +170,6 @@ function simpleParse(text) {
   // Strikethrough
   html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
 
-  // Blockquotes
-  html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
-
   // Links
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
 
@@ -148,11 +192,11 @@ function simpleParse(text) {
   });
 
   // Paragraphs
-  html = html.split('\n\n').map(para => {
-    if (para.trim().startsWith('<h') || para.trim().startsWith('<ul') || 
-        para.trim().startsWith('<ol') || para.trim().startsWith('<blockquote') ||
-        para.trim().startsWith('<pre') || para.trim().startsWith('<hr') ||
-        para.trim().startsWith('<div')) {
+  html = html.split('\n\n').map(function(para) {
+    var t = para.trim();
+    if (t.startsWith('<h') || t.startsWith('<ul') || t.startsWith('<ol') ||
+        t.startsWith('<blockquote') || t.startsWith('<pre') || t.startsWith('<hr') ||
+        t.startsWith('<div') || t.startsWith('<li')) {
       return para;
     }
     return '<p>' + para.replace(/\n/g, '<br>') + '</p>';

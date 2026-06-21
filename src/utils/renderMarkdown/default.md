@@ -35,6 +35,23 @@ pub fn main() !void {
 > "The best way to predict the future is to create it."
 > — Peter Drucker
 
+### Callouts
+
+> [!Note]
+> Useful information users should know.
+
+> [!Tip]
+> Helpful advice for doing things better.
+
+> [!Important]
+> Key information users must know.
+
+> [!Warning]
+> Urgent info that needs immediate user attention.
+
+> [!Caution]
+> Potential damage or risk.
+
 ### Mermaid Diagram
 
 ```mermaid

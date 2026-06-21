@@ -299,6 +299,73 @@
   margin: 0.5em 0;
 }
 
+/* ── Callouts (Obsidian-style alerts) ── */
+.preview-content .callout {
+  margin: 1em 0;
+  border-left: 3px solid var(--callout-color, var(--kwd));
+  background: color-mix(in srgb, var(--callout-color, var(--kwd)) 6%, var(--surface));
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.preview-content .callout-title {
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: color-mix(in srgb, var(--callout-color, var(--kwd)) 9%, var(--surface));
+  color: var(--callout-color, var(--kwd));
+}
+
+.preview-content .callout-title::before {
+  content: var(--callout-icon, "ℹ");
+  font-size: 16px;
+  line-height: 1;
+}
+
+.preview-content .callout-content {
+  padding: 8px 16px 12px;
+}
+
+.preview-content .callout-content p {
+  margin: 0.4em 0;
+}
+
+.preview-content .callout-content p:first-child {
+  margin-top: 0;
+}
+
+.preview-content .callout-content p:last-child {
+  margin-bottom: 0;
+}
+
+.preview-content .callout-note {
+  --callout-color: var(--kwd);
+  --callout-icon: "ℹ";
+}
+
+.preview-content .callout-tip {
+  --callout-color: var(--opr);
+  --callout-icon: "⚡";
+}
+
+.preview-content .callout-important {
+  --callout-color: var(--typ);
+  --callout-icon: "◈";
+}
+
+.preview-content .callout-warning {
+  --callout-color: var(--num);
+  --callout-icon: "△";
+}
+
+.preview-content .callout-caution {
+  --callout-color: var(--fnc);
+  --callout-icon: "⊗";
+}
+
 /* ── Mermaid diagrams ── */
 .preview-content .mermaid {
   margin: 1em 0;

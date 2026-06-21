@@ -172,6 +172,24 @@
         '.mermaid{margin:1em 0;text-align:center}' +
         '.mermaid svg{max-width:100%;height:auto}' +
         '.mermaid-error{background:' + mix(c.fnc, '10%', c.surface) + ';border:1px solid ' + c.fnc + ';border-radius:6px;padding:12px 16px;color:' + c.fnc + ';font-size:13px}' +
+        '.callout{margin:1em 0;border-left:3px solid ' + c.kwd + ';background:' + mix(c.kwd, '6%', c.surface) + ';border-radius:6px;overflow:hidden}' +
+        '.callout-title{padding:8px 16px;font-weight:600;font-size:14px;background:' + mix(c.kwd, '9%', c.surface) + ';color:' + c.kwd + '}' +
+        '.callout-title::before{content:"ℹ";font-size:16px;margin-right:8px}' +
+        '.callout-content{padding:8px 16px 12px}' +
+        '.callout-note{--callout-color:' + c.kwd + '}' +
+        '.callout-tip{--callout-color:' + c.opr + '}' +
+        '.callout-tip .callout-title{color:' + c.opr + ';background:' + mix(c.opr, '9%', c.surface) + '}' +
+        '.callout-tip .callout-title::before{content:"⚡"}' +
+        '.callout-important{--callout-color:' + c.typ + '}' +
+        '.callout-important .callout-title{color:' + c.typ + ';background:' + mix(c.typ, '9%', c.surface) + '}' +
+        '.callout-important .callout-title::before{content:"◈"}' +
+        '.callout-warning{--callout-color:' + c.num + '}' +
+        '.callout-warning .callout-title{color:' + c.num + ';background:' + mix(c.num, '9%', c.surface) + '}' +
+        '.callout-warning .callout-title::before{content:"△"}' +
+        '.callout-caution{--callout-color:' + c.fnc + '}' +
+        '.callout-caution .callout-title{color:' + c.fnc + ';background:' + mix(c.fnc, '9%', c.surface) + '}' +
+        '.callout-caution .callout-title::before{content:"⊗"}' +
+        '.callout-content p{margin:.4em 0}' +
         /* Prism tokens */
         '.token.comment,.token.prolog,.token.doctype,.token.cdata{color:' + c.textMuted + ';font-style:italic}' +
         '.token.punctuation{color:' + c.textSecondary + '}' +
