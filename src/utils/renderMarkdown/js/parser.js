@@ -63,6 +63,9 @@ function parseMarkdown(text) {
       // Sanitize XSS from raw HTML passthrough
       html = sanitizeHtml(html);
       
+      // Convert mermaid code blocks to diagram containers
+      html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, '<div class="mermaid">$1</div>');
+      
       // Post-process to add data attributes for KaTeX
       html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, math) => {
         return `<div class="katex-display" data-math="${escapeAttr(math.trim())}"></div>`;
@@ -87,6 +90,9 @@ function simpleParse(text) {
 
   // Escape HTML
   html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // Mermaid diagrams (must come before general code blocks)
+  html = html.replace(/```mermaid\n?([\s\S]*?)```/g, '<div class="mermaid">$1</div>');
 
   // Code blocks (```...```)
   html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre class="language-$1"><code>$2</code></pre>');

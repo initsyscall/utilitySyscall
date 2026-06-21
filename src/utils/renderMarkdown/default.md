@@ -14,10 +14,7 @@
 - Live preview
 - Syntax highlighting for code
 - KaTeX math support: $E = mc^2$
-- Block math:
-  $$
-  \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
-  $$
+- Block math: $$  \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi} $$
 - Theme switching (night/day)
 
 
@@ -38,15 +35,30 @@ pub fn main() !void {
 > "The best way to predict the future is to create it."
 > — Peter Drucker
 
+### Mermaid Diagram
+
+```mermaid
+graph TD
+    A[Markdown] --> B{Parse}
+    B --> C[KaTeX Math]
+    B --> D[Prism Code]
+    B --> E[Mermaid Diagrams]
+    C --> F[Render Preview]
+    D --> F
+    E --> F
+```
+
 ### Table
 
 | Feature | Status |
 |---------|--------|
 | Markdown | ✅ |
+| Mermaid | ✅ |
 | Math | ✅ |
 | Theme | ✅ |
 
 ---
 
 *Enjoy writing!*
+
 

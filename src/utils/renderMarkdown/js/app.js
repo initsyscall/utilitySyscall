@@ -26,6 +26,12 @@
       math.initKatex().then(function() {
         App.renderAll();
       });
+
+      if (window.mermaidModule) {
+        mermaidModule.init().then(function() {
+          App.renderAll();
+        });
+      }
     },
 
     updateThemeIcon: function() {
@@ -74,6 +80,7 @@
       setTimeout(function() {
         if (window.Prism) Prism.highlightAllUnder(document.getElementById('previewOutput'));
         math.processMathInElement('previewOutput');
+        if (window.mermaidModule) mermaidModule.render(document.getElementById('previewOutput'));
       }, 50);
     },
 
@@ -162,6 +169,9 @@
         'img{max-width:100%;border-radius:6px;margin:.5em 0}' +
         '.katex-display{background:' + mix(c.opr, '5%', c.surface) + ';padding:16px;border-radius:6px;margin:1em 0;overflow-x:auto;border:1px solid ' + mix(c.opr, '15%', c.border) + '}' +
         '.katex{color:' + c.textPrimary + '}' +
+        '.mermaid{margin:1em 0;text-align:center}' +
+        '.mermaid svg{max-width:100%;height:auto}' +
+        '.mermaid-error{background:' + mix(c.fnc, '10%', c.surface) + ';border:1px solid ' + c.fnc + ';border-radius:6px;padding:12px 16px;color:' + c.fnc + ';font-size:13px}' +
         /* Prism tokens */
         '.token.comment,.token.prolog,.token.doctype,.token.cdata{color:' + c.textMuted + ';font-style:italic}' +
         '.token.punctuation{color:' + c.textSecondary + '}' +
@@ -241,7 +251,10 @@
         if (!e.target.closest('.hamburger') && !e.target.closest('.menu-dropdown')) App.closeMenu();
       });
 
-      window.addEventListener('themechange', this.renderAll.bind(this));
+      window.addEventListener('themechange', function() {
+        if (window.mermaidModule) mermaidModule.updateTheme();
+        App.renderAll();
+      });
     }
   };
 

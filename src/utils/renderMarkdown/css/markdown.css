@@ -299,6 +299,37 @@
   margin: 0.5em 0;
 }
 
+/* ── Mermaid diagrams ── */
+.preview-content .mermaid {
+  margin: 1em 0;
+  text-align: center;
+}
+
+.preview-content .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-content .mermaid-error {
+  background: color-mix(in srgb, var(--fnc) 10%, var(--surface));
+  border: 1px solid var(--fnc);
+  border-radius: 6px;
+  padding: 12px 16px;
+  color: var(--fnc);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.preview-content .mermaid-error-icon {
+  font-weight: 700;
+}
+
+.preview-content .mermaid-fallback {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
 /* ── KaTeX math ── */
 .preview-content .katex-display {
   background: color-mix(in srgb, var(--opr) 5%, var(--surface));
