@@ -115,75 +115,73 @@
       reader.readAsText(file);
     },
 
+    exportStyles: function() {
+      var c = theme.getThemeColors(this.currentTheme);
+      return '<style>' +
+        '*{box-sizing:border-box;margin:0;padding:0}' +
+        'body{font-family:system-ui,-apple-system,sans-serif;background:' + c.bg + ';color:' + c.textPrimary + ';padding:40px;max-width:800px;margin:0 auto;line-height:1.75;font-size:15px}' +
+        '@media print{body{padding:15mm}}' +
+        'h1{font-size:1.7em;font-weight:700;margin:1.8em 0 .4em;letter-spacing:-.02em}' +
+        'h2{font-size:1.4em;font-weight:700;margin:1.8em 0 .4em;border-bottom:1px solid ' + c.border + ';padding-bottom:.25em}' +
+        'h3{font-size:1.2em;font-weight:700;margin:1.8em 0 .4em}' +
+        'h4{font-size:1.05em;font-weight:700;margin:1.5em 0 .3em;color:' + c.textSecondary + '}' +
+        'p{margin:.8em 0}' +
+        'strong{color:' + c.textPrimary + '}' +
+        'em{color:' + c.textSecondary + '}' +
+        'a{color:' + c.kwd + ';text-decoration:none}' +
+        'a:hover{text-decoration:underline}' +
+        'code{background:color-mix(in srgb,' + c.kwd + ' 10%,' + c.surface + ');color:' + c.fnc + ';padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em}' +
+        'pre{background:' + c.surface + ';border:1px solid ' + c.border + ';border-radius:8px;padding:16px 18px;overflow-x:auto;margin:1em 0}' +
+        'pre code{background:none;padding:0;border:none;color:' + c.textPrimary + ';font-size:.85em;line-height:1.55}' +
+        'blockquote{border-left:3px solid ' + c.kwd + ';background:color-mix(in srgb,' + c.kwd + ' 4%,' + c.surface + ');padding:10px 16px;margin:1em 0;color:' + c.textSecondary + ';border-radius:0 6px 6px 0}' +
+        'blockquote p{margin:.4em 0}' +
+        'ul,ol{padding-left:22px;margin:.6em 0}' +
+        'li{margin:.3em 0}' +
+        'ul li::marker{color:' + c.kwd + '}' +
+        'ol li::marker{color:' + c.num + ';font-weight:600}' +
+        'table{width:auto;min-width:50%;max-width:100%;border-collapse:collapse;margin:1em 0;font-size:.9em;border:1px solid ' + c.border + ';border-radius:8px;overflow:hidden}' +
+        'th{background:' + c.surface + ';color:' + c.textPrimary + ';font-weight:600;text-align:left;padding:8px 14px;border:1px solid ' + c.border + '}' +
+        'td{padding:7px 14px;border:1px solid ' + c.border + '}' +
+        'tr:nth-child(even){background:color-mix(in srgb,' + c.surface + ' 50%,' + c.bg + ')}' +
+        'hr{border:none;border-top:1px solid ' + c.border + ';margin:2em 0}' +
+        'img{max-width:100%;border-radius:6px}' +
+        '.katex-display{background:' + c.surface + ';padding:14px;border-radius:8px;margin:1em 0;overflow-x:auto}' +
+        '.katex{color:' + c.textPrimary + '}' +
+        /* Prism tokens */
+        '.token.comment,.token.prolog,.token.doctype,.token.cdata{color:' + c.textMuted + ';font-style:italic}' +
+        '.token.punctuation{color:' + c.textSecondary + '}' +
+        '.token.property,.token.tag,.token.boolean,.token.number,.token.constant,.token.symbol,.token.deleted{color:' + c.num + '}' +
+        '.token.selector,.token.attr-name,.token.string,.token.char,.token.builtin,.token.inserted{color:' + c.str + '}' +
+        '.token.operator,.token.entity,.token.url,.token.variable{color:' + c.opr + '}' +
+        '.token.atrule,.token.attr-value,.token.keyword{color:' + c.kwd + '}' +
+        '.token.function,.token.class-name{color:' + c.fnc + '}' +
+        '.token.regex,.token.important{color:' + c.num + '}' +
+        '.token.bold{font-weight:bold}' +
+        '.token.italic{font-style:italic}' +
+        '</style>'
+    },
+
     exportAsPdf: function() {
       if (window.Prism) Prism.highlightAllUnder(document.getElementById('previewOutput'));
       var preview = document.getElementById('previewOutput').cloneNode(true);
-      var printColors = {
-        bg: '#ffffff', surface: '#f5f5f5', border: '#dddddd',
-        textPrimary: '#1a1a1a', textSecondary: '#555555', textMuted: '#888888',
-        kwd: '#752D7A', fnc: '#D62846', typ: '#9E4081',
-        str: '#D96677', num: '#B06A3B', opr: '#0F828A'
-      };
       var pw = window.open('', '_blank');
-      pw.document.write('<!DOCTYPE html><html><head><title>Markdown Export</title>' +
+      pw.document.write('<!DOCTYPE html>' +
+        '<html><head><title>Markdown Export</title>' +
         '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">' +
-        '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">' +
-        '<style>*{box-sizing:border-box;margin:0;padding:0}@media print{body{padding:0!important}}' +
-        'body{font-family:Segoe UI,system-ui,sans-serif;background:' + printColors.bg + ';color:' + printColors.textPrimary + ';padding:15mm;max-width:100%;margin:0 auto;line-height:1.5;overflow-x:hidden}' +
-        'h1{font-size:1.8em;border-bottom:2px solid ' + printColors.kwd + ';padding-bottom:0.3em;color:' + printColors.textPrimary + ';margin:0 0 .5em}' +
-        'h2{font-size:1.4em;border-left:4px solid ' + printColors.typ + ';padding-left:12px;color:' + printColors.textPrimary + ';margin:1.5em 0 .5em}' +
-        'h3{font-size:1.2em;color:' + printColors.fnc + '}h4{color:' + printColors.str + '}' +
-        'p{margin:.8em 0}code{background:' + printColors.surface + ';color:' + printColors.fnc + ';padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.9em}' +
-        'pre{background:' + printColors.surface + ';padding:12px;border-radius:8px;overflow-x:auto;margin:.8em 0}' +
-        'pre code{background:none;padding:0;color:' + printColors.textPrimary + ';font-size:.85em;line-height:1.5}' +
-        'blockquote{border-left:4px solid ' + printColors.kwd + ';background:' + printColors.surface + ';padding:10px 16px;color:' + printColors.textSecondary + ';border-radius:0 8px 8px 0;margin:.8em 0}' +
-        'ul,ol{padding-left:20px;margin:.8em 0}li{margin:.3em 0}a{color:' + printColors.kwd + '}' +
-        'table{width:auto;max-width:100%;min-width:50%;border-collapse:collapse;margin:.8em 0;border:1px solid ' + printColors.border + ';font-size:.85em}' +
-        'th,td{border:1px solid ' + printColors.border + ';padding:6px 12px;text-align:left;min-width:80px}' +
-        'th{background:' + printColors.surface + ';color:' + printColors.kwd + ';font-weight:600}' +
-        'tr:nth-child(even){background:' + printColors.surface + '}' +
-        'hr{border:none;border-top:2px dashed ' + printColors.border + ';margin:1.5em 0}' +
-        'img{max-width:100%;height:auto}' +
-        '.katex-display{background:' + printColors.surface + ';padding:12px;border-radius:8px;margin:.8em 0;overflow-x:auto}' +
-        '.token.comment{color:' + printColors.textMuted + ';font-style:italic}' +
-        '.token.keyword{color:' + printColors.kwd + '}' +
-        '.token.string{color:' + printColors.str + '}' +
-        '.token.number{color:' + printColors.num + '}' +
-        '.token.function{color:' + printColors.fnc + '}' +
-        '.token.operator{color:' + printColors.opr + '}' +
-        '.token.class-name{color:' + printColors.typ + '}' +
-        '.token.punctuation{color:' + printColors.textSecondary + '}' +
-        '.token.property{color:' + printColors.num + '}' +
-        '.token.boolean{color:' + printColors.num + '}' +
-        '.token.attr-name{color:' + printColors.kwd + '}' +
-        '.token.attr-value{color:' + printColors.str + '}' +
-        '.token.selector{color:' + printColors.kwd + '}' +
-        '.token.tag{color:' + printColors.fnc + '}' +
-        '.token.atrule{color:' + printColors.kwd + '}' +
-        '.tokenbuiltin{color:' + printColors.fnc + '}' +
-        '</style></head><body>' + preview.innerHTML + '</body></html>');
+        this.exportStyles() +
+        '</head><body>' + preview.innerHTML + '</body></html>');
       pw.document.close();
       setTimeout(function() { pw.print(); }, 500);
       this.closeMenu();
     },
 
     exportAsHtml: function() {
-      var colors = theme.getThemeColors(this.currentTheme);
       if (window.Prism) Prism.highlightAllUnder(document.getElementById('previewOutput'));
       var html = document.getElementById('previewOutput').innerHTML;
       var content = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Markdown Export</title>' +
         '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">' +
-        '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">' +
-        '<style>:root{--bg:' + colors.bg + ';--surface:' + colors.surface + ';--border:' + colors.border + ';--textPrimary:' + colors.textPrimary + ';--textSecondary:' + colors.textSecondary + ';--textMuted:' + colors.textMuted + ';--kwd:' + colors.kwd + ';--fnc:' + colors.fnc + ';--typ:' + colors.typ + ';--str:' + colors.str + ';--num:' + colors.num + ';--opr:' + colors.opr + '}' +
-        '*{box-sizing:border-box}body{font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--textPrimary);padding:40px;max-width:800px;margin:0 auto;line-height:1.6}' +
-        'h1{font-size:2em;border-bottom:2px solid var(--kwd);padding-bottom:.3em}h2{font-size:1.5em;border-left:4px solid var(--typ);padding-left:12px}h3{font-size:1.25em;color:var(--fnc)}' +
-        'p{margin:1em 0}code{background:var(--surface);color:var(--fnc);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.9em}' +
-        'pre{background:var(--surface);padding:16px;border-radius:8px;overflow-x:auto;margin:1em 0}pre code{background:none;padding:0;color:var(--textPrimary)}' +
-        'blockquote{border-left:4px solid var(--kwd);background:var(--surface);padding:12px 16px;color:var(--textSecondary);border-radius:0 8px 8px 0}' +
-        'ul,ol{padding-left:24px}a{color:var(--kwd)}table{width:100%;border-collapse:collapse;margin:1em 0}' +
-        'th,td{border:1px solid var(--border);padding:10px}th{background:var(--surface);color:var(--kwd)}' +
-        '.token.comment{color:var(--textMuted)}.token.keyword{color:var(--kwd)}.token.string{color:var(--str)}.token.number{color:var(--num)}.token.function{color:var(--fnc)}.token.operator{color:var(--opr)}.token.class-name{color:var(--typ)}.token.punctuation{color:var(--textSecondary)}' +
-        '</style></head><body>' + html + '</body></html>';
+        this.exportStyles() +
+        '</head><body>' + html + '</body></html>';
       var blob = new Blob([content], { type: 'text/html' });
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
