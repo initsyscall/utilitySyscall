@@ -103,22 +103,22 @@
 
 /* Day theme - Catppuccin Latte */
 [data-theme="daySyscall"] {
-  --hl-heading: #d62846;
-  --hl-code-bg: #fab387;
-  --hl-code-text: #1a1a1a;
-  --hl-hr: #a8959a;
-  --hl-quote: #827075;
-  --hl-list: #752d7a;
-  --hl-bold: #b06a3b;
-  --hl-bold-italic: #b06a3b;
-  --hl-italic: #752d7a;
-  --hl-strikethrough: #827075;
-  --hl-inline-code: #0f828a;
-  --hl-link: #752d7a;
-  --hl-image: #d96677;
-  --hl-html-tag: #d62846;
-  --hl-html-attr: #b06a3b;
-  --hl-html-value: #0f828a;
+  --hl-heading: #D03060;
+  --hl-code-bg: #E0D0C0;
+  --hl-code-text: #201820;
+  --hl-hr: #A888A8;
+  --hl-quote: #584870;
+  --hl-list: #8040E0;
+  --hl-bold: #C08830;
+  --hl-bold-italic: #C08830;
+  --hl-italic: #9060D0;
+  --hl-strikethrough: #A888A8;
+  --hl-inline-code: #30A890;
+  --hl-link: #8040E0;
+  --hl-image: #C06080;
+  --hl-html-tag: #D03060;
+  --hl-html-attr: #C08830;
+  --hl-html-value: #30A890;
 }
 
 @media (max-width: 767px) {

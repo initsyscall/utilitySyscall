@@ -241,23 +241,14 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px;
-      color: var(--textPrimary);
-      font-size: 14px;
-      font-family: var(--font-mono);
-      line-height: 1.6;
-      resize: none;
+      padding: 24px 32px;
       flex: 1;
       width: 100%;
-      transition: border-color var(--transition);
-    }
-
-    .editor:focus { outline: none; border-color: var(--kwd); }
-
-    .preview-pane .preview-content {
       overflow-y: auto;
       min-height: 300px;
     }
+
+    .editor:focus { outline: none; border-color: var(--kwd); }
 
     .file-input { display: none; }
 

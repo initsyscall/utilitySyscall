@@ -29,6 +29,21 @@ function loadMarked() {
   });
 }
 
+function sanitizeHtml(html) {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
+    .replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, '')
+    .replace(/<link\b[^>]*\/?>/gi, '')
+    .replace(/<meta\b[^>]*\/?>/gi, '')
+    .replace(/\bon\w+\s*=\s*"[^"]*"/gi, '')
+    .replace(/\bon\w+\s*=\s*'[^']*'/gi, '')
+    .replace(/\bon\w+\s*=\s*[^\s>]+/gi, '')
+    .replace(/javascript\s*:/gi, '');
+}
+
 function parseMarkdown(text) {
   if (!text || typeof text !== 'string') {
     return '';
@@ -44,6 +59,9 @@ function parseMarkdown(text) {
       });
       
       let html = markedLib.parse(text);
+      
+      // Sanitize XSS from raw HTML passthrough
+      html = sanitizeHtml(html);
       
       // Post-process to add data attributes for KaTeX
       html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, math) => {
@@ -100,7 +118,7 @@ function simpleParse(text) {
   html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
 
   // Blockquotes
-  html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+  html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
 
   // Links
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
@@ -112,18 +130,23 @@ function simpleParse(text) {
   html = html.replace(/^---$/gm, '<hr>');
   html = html.replace(/^\*\*\*$/gm, '<hr>');
 
-  // Lists - simple approach
-  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
-  html = html.replace(/(<li>.+<\/li>)+/g, '<ul>$&</ul>');
-  
-  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+  // Lists - block-level wrapping
+  html = html.replace(/^- (.+)$/gm, '<!--ul--><li>$1</li>');
+  html = html.replace(/((?:<!--ul--><li>[\s\S]*?<\/li>(?:\n|$))+)/g, function(m) {
+    return '<ul>\n' + m.replace(/<!--ul-->/g, '') + '</ul>';
+  });
+
+  html = html.replace(/^\d+\. (.+)$/gm, '<!--ol--><li>$1</li>');
+  html = html.replace(/((?:<!--ol--><li>[\s\S]*?<\/li>(?:\n|$))+)/g, function(m) {
+    return '<ol>\n' + m.replace(/<!--ol-->/g, '') + '</ol>';
+  });
 
   // Paragraphs
   html = html.split('\n\n').map(para => {
     if (para.trim().startsWith('<h') || para.trim().startsWith('<ul') || 
         para.trim().startsWith('<ol') || para.trim().startsWith('<blockquote') ||
         para.trim().startsWith('<pre') || para.trim().startsWith('<hr') ||
-        para.trim().startsWith('<div') || para.trim().startsWith('<li')) {
+        para.trim().startsWith('<div')) {
       return para;
     }
     return '<p>' + para.replace(/\n/g, '<br>') + '</p>';

@@ -22,18 +22,18 @@ const themeData = {
   daySyscall: {
     name: 'Day',
     colors: {
-      bg: "#FCF6F5",
-      surface: "#F2EAE9",
-      border: "#E0D1CF",
-      textPrimary: "#45383C",
-      textSecondary: "#827075",
-      textMuted: "#A8959A",
-      kwd: "#752D7A",
-      fnc: "#D62846",
-      typ: "#9E4081",
-      str: "#D96677",
-      num: "#B06A3B",
-      opr: "#0F828A"
+      bg: "#FCF0E0",
+      surface: "#F5E8D8",
+      border: "#E0D0C0",
+      textPrimary: "#201820",
+      textSecondary: "#584870",
+      textMuted: "#A888A8",
+      kwd: "#8040E0",
+      fnc: "#D03060",
+      typ: "#9060D0",
+      str: "#C06080",
+      num: "#C08830",
+      opr: "#30A890"
     }
   }
 };

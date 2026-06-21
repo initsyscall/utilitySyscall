@@ -25,54 +25,7 @@ const editor = (function() {
     return html || '<span class="hl-plain"></span>';
   }
 
-  function processLine(line) {
-    // Empty line
-    if (/^\s*$/.test(line)) {
-      return '<span class="hl-plain"> </span>';
-    }
-
-    // Heading - entire line colored
-    const headingMatch = line.match(/^(#{1,6}\s.*)$/);
-    if (headingMatch) {
-      return `<span class="hl-heading">${escapeHtml(headingMatch[1])}</span>`;
-    }
-
-    // Code fence ```
-    const codeFenceMatch = line.match(/^(```\w*)$/);
-    if (codeFenceMatch) {
-      return `<span class="hl-code-fence">${escapeHtml(codeFenceMatch[1])}</span>`;
-    }
-
-    // Horizontal rule ---
-    const hrMatch = line.match(/^(\s*[-*_]{3,}\s*)$/);
-    if (hrMatch) {
-      return `<span class="hl-hr">${escapeHtml(hrMatch[1])}</span>`;
-    }
-
-    // Blockquote > - entire line gray
-    const quoteMatch = line.match(/^(\s*&gt;\s.*)$/);
-    if (quoteMatch) {
-      return `<span class="hl-quote">${escapeHtml(quoteMatch[1])}</span>`;
-    }
-
-    // Unordered list - entire line purple
-    const listMatch = line.match(/^(\s*[-*+]\s.*)$/);
-    if (listMatch) {
-      return `<span class="hl-list">${escapeHtml(listMatch[1])}</span>`;
-    }
-
-    // Ordered list - entire line purple
-    const numListMatch = line.match(/^(\s*\d+\.\s.*)$/);
-    if (numListMatch) {
-      return `<span class="hl-list">${escapeHtml(numListMatch[1])}</span>`;
-    }
-
-    // Inline patterns - process each match
-    let result = '';
-    let remaining = line;
-    let lastIndex = 0;
-
-    // Combined regex for inline elements
+  function processInlinePatterns(text) {
     const patterns = [
       { regex: /(\*\*\*[^*]+\*\*\*)/g, cls: 'hl-bold-italic' },
       { regex: /(\*\*[^*]+\*\*)/g, cls: 'hl-bold' },
@@ -84,17 +37,16 @@ const editor = (function() {
       { regex: /(`[^`]+`)/g, cls: 'hl-inline-code' },
       { regex: /(\[[^\]]+\]\([^)]+\))/g, cls: 'hl-link' },
       { regex: /(!\[[^\]]*\]\([^)]+\))/g, cls: 'hl-image' },
-      { regex: /(&lt;\/?[\w-]+)/g, cls: 'hl-html-tag' },
+      { regex: /(<\/?[\w-]+)/g, cls: 'hl-html-tag' },
       { regex: /(\s[\w-]+=)/g, cls: 'hl-html-attr' },
       { regex: /("[^"]*")/g, cls: 'hl-html-value' },
     ];
 
-    // Find all matches with their positions
     let allMatches = [];
     for (const p of patterns) {
       let match;
       const regex = new RegExp(p.regex.source, 'g');
-      while ((match = regex.exec(line)) !== null) {
+      while ((match = regex.exec(text)) !== null) {
         allMatches.push({
           start: match.index,
           end: match.index + match[0].length,
@@ -104,28 +56,74 @@ const editor = (function() {
       }
     }
 
-    // Sort by position and filter overlaps
     allMatches.sort((a, b) => a.start - b.start);
-    allMatches = allMatches.filter((m, i) => {
-      if (i === 0) return true;
-      return m.start >= allMatches[i - 1].end;
-    });
 
-    // Build result
-    lastIndex = 0;
+    let kept = [];
+    for (let i = 0; i < allMatches.length; i++) {
+      if (kept.length === 0 || allMatches[i].start >= kept[kept.length - 1].end) {
+        kept.push(allMatches[i]);
+      }
+    }
+    allMatches = kept;
+
+    let result = '';
+    let lastIndex = 0;
     for (const m of allMatches) {
       if (m.start > lastIndex) {
-        result += `<span class="hl-plain">${escapeHtml(line.slice(lastIndex, m.start))}</span>`;
+        result += `<span class="hl-plain">${escapeHtml(text.slice(lastIndex, m.start))}</span>`;
       }
       result += `<span class="${m.cls}">${escapeHtml(m.text)}</span>`;
       lastIndex = m.end;
     }
 
-    if (lastIndex < line.length) {
-      result += `<span class="hl-plain">${escapeHtml(line.slice(lastIndex))}</span>`;
+    if (lastIndex < text.length) {
+      result += `<span class="hl-plain">${escapeHtml(text.slice(lastIndex))}</span>`;
     }
 
-    return result || `<span class="hl-plain">${escapeHtml(line)}</span>`;
+    return result || escapeHtml(text);
+  }
+
+  function processLine(line) {
+    if (/^\s*$/.test(line)) {
+      return '<span class="hl-plain"> </span>';
+    }
+
+    let wrapperCls = null;
+    let content = line;
+
+    const headingMatch = line.match(/^(#{1,6}\s.*)$/);
+    if (headingMatch) { wrapperCls = 'hl-heading'; content = headingMatch[1]; }
+
+    if (!wrapperCls) {
+      const codeFenceMatch = line.match(/^(```\w*)$/);
+      if (codeFenceMatch) { wrapperCls = 'hl-code-fence'; content = codeFenceMatch[1]; }
+    }
+
+    if (!wrapperCls) {
+      const hrMatch = line.match(/^(\s*[-*_]{3,}\s*)$/);
+      if (hrMatch) { wrapperCls = 'hl-hr'; content = hrMatch[1]; }
+    }
+
+    if (!wrapperCls) {
+      const quoteMatch = line.match(/^(\s*>\s.*)$/);
+      if (quoteMatch) { wrapperCls = 'hl-quote'; content = quoteMatch[1]; }
+    }
+
+    if (!wrapperCls) {
+      const listMatch = line.match(/^(\s*[-*+]\s.*)$/);
+      if (listMatch) { wrapperCls = 'hl-list'; content = listMatch[1]; }
+    }
+
+    if (!wrapperCls) {
+      const numListMatch = line.match(/^(\s*\d+\.\s.*)$/);
+      if (numListMatch) { wrapperCls = 'hl-list'; content = numListMatch[1]; }
+    }
+
+    if (wrapperCls) {
+      return `<span class="${wrapperCls}">${processInlinePatterns(content)}</span>`;
+    }
+
+    return processInlinePatterns(line);
   }
 
   function handleInput() {
@@ -177,8 +175,8 @@ const editor = (function() {
         e.preventDefault();
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-        textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
-        textarea.selectionStart = textarea.selectionEnd = start + 2;
+        textarea.value = textarea.value.substring(0, start) + '    ' + textarea.value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + 4;
         handleInput();
       }
     });

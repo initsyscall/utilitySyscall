@@ -69,12 +69,7 @@ function renderMathDisplay(element) {
 }
 
 function renderMath(element) {
-  // Try both methods - graceful fallback
-  if (!renderMathDisplay(element)) {
-    // If KaTeX not ready, keep original $...$ and $$...$$
-    console.log('KaTeX not available, math will render as plain text');
-  }
-  renderMathInline(element);
+  renderMathDisplay(element);
 }
 
 function initKatex() {
